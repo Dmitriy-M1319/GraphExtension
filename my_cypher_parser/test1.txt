@@ -1,0 +1,1 @@
+MATCH FROM graph res = (:Person{name: "Pam"})-[:PARENT]->(:Person{name: "Bob"}) RETURN res IS NOT NULL;

@@ -1,0 +1,34 @@
+Примитивные варианты запросов для будущей графовой БД:
+
+1 - Создание нового графа
+CREATE GRAPH name (pam: Person{name: "Pam"}, bob: Person{name: "Bob"}, ...), ((pam: Person)-[:PARENT]->(bob: Person), ...);
+
+2 - Варианты выборки данных
+
+2.1 - Простая выборка всех узлов в графе
+MATCH FROM graph_name (p:Person) RETURN p;
+
+2.2 - Поиск по имеющимся связям
+MATCH FROM graph_name res = (:Person{name: "Pam"})-[:PARENT]->(:Person{name: "Bob"}) RETURN res IS NOT NULL;
+Если вместо метки указано [:], то ищутся все возможные связи
+
+2.3 - Вывод имеющихся связей (ребер)
+MATCH FROM graph_name (p1:Person)-[:PARENT]->(p2:Person) RETURN p1, p2;
+По итогу формируется таблица связей
+
+2.4 - Вывод всех соседей (по метке ребра или всех возможных)
+MATCH FROM graph_name result = (p1:Person)-[:PARENT]->() RETURN result;
+
+3 - Обновление данных
+MATCH FROM graph_name (p:Person) WHERE p.name="Bob" SET p.age=18;
+Либо создается новое поле, либо метка обновляется
+
+4 - Удаление
+4.1 - Удаление самих узлов
+MATCH FROM graph_name (p:Person) (WHERE p.name="Bob")? DELETE p;
+Можно сделать удаление по условию
+
+4.2 - Удаление связей (ребер) между узлами
+MATCH FROM graph_name (p1:Person)-[r]->(p2:Person) DELETE r;
+Если указать r:PARENT, то удалятся ребра с меткой PARENT
+
