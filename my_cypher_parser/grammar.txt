@@ -37,12 +37,12 @@ MATCH FROM graph_name (p1:Person)-[r:]->(p2:Person) DELETE r;
 stmt: create_stmt
     | match_stmt;
 
-create_stmt: CREATE GRAPH obj_name nodes_list ',' edges_list;
+create_stmt: CREATE GRAPH obj_name vertices_list ',' edges_list;
 
-match_stmt: MATCH FROM obj_name edge_assign where_stmt chstate_stmts;
+match_stmt: MATCH FROM obj_name match_body where_stmt chstate_stmts;
 
-edge_assign: egde_assign
-           | nodes_list;
+match_body: egde_assign
+           | vertices_list;
 
 edge_assign: obj_name '=' edges_list
            | edges_list;
@@ -66,30 +66,24 @@ obj_list: obj_name ',' obj_list
 assign: obj_name '.' obj_name '=' str_value;
 
 // Разбор ребер графа
-edges_list: '(' edges_list ')';
+edges_list: '(' edge ',' edges_list ')'
+          | '(' edge ')';
 
-edges_list: edge ',' edges_list
-          | edge;
-
-edge: nodes_list '-' edge '->' nodes_list;
-
-edge: '[' obj_name ':' label ']';
-
-label: label | '';
-
+edge: vertices_list '-' '[' obj_name ':' label ']' '->' vertices_list;
 
 // Разбор узлов графа
-nodes_list: '(' nodes_list ')';
 
-nodes_list: node ',' nodes_list
-          | node
+vertices_list: '(' node ',' vertices_list ')'
+             | '(' node ')'
 
-node: obj_name ':' node | '';
+vertex: obj_name ':' label '{' vertex_body '}' 
+      | obj_name ':' label 
+      | '';
 
-node: label '{' node_body '}' | label;
-
-node_body: key_value ',' node_body
+vertex_body: key_value ',' vertex_body
          | key_value;
+
+label: label | '';
 
 key_value: obj_name ':' str_value;
 
