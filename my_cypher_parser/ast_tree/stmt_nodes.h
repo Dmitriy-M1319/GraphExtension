@@ -3,6 +3,9 @@
 
 #include "ast_node.h"
 #include "object_name_node.h"
+#include "base_nodes.h"
+#include "edge_nodes.h"
+#include <optional>
 #include <string>
 namespace cypher::tree {
     
@@ -41,8 +44,6 @@ namespace cypher::tree {
             }
         }
     };
-
-    class chstate_stmt : public ast_node {};
 
     class return_stmt_node : public chstate_stmt {
     public:
@@ -104,8 +105,55 @@ namespace cypher::tree {
         assign_node _ass;
     };
     
-    class edge_assign_node : public ast_node {
+    class edge_assign_node : public match_body_node {
+    public:
+        edge_assign_node(const edges_list& lst, 
+                std::optional<object_name_node> name, ast_node *parent): _lst(lst), _name(name) {
+            _parent = parent;
+            _type = ast_node_types::EDGE_ASSIGN;
+        }
+
+        void print() override {
+            std::cout << "Assign statement:" << std::endl;
+            if(_name.has_value()) {
+                _name->print();
+                std::cout << " = " << std::endl;
+            }
+            _lst.print();
+        }
+    private:
+        edges_list _lst;
+        std::optional<object_name_node> _name;
     };
+
+    
+    class match_stmt_node : public stmt_node {
+    public:
+        match_stmt_node(const object_name_node& name,
+            match_body_node* body,
+            std::optional<where_stmt_node> where_stmt,
+            chstate_stmt *chstmt,
+            ast_node *parent): _name(name), _body(body), _where(where_stmt), _chstmt(chstmt) {
+            _parent = parent;
+            _type = ast_node_types::MATCH_STMT;
+        }
+
+        void print() override {
+            std::cout << "MATCH statement:" << std::endl;
+            _name.print();
+            _body->print();
+            if(_where.has_value()) {
+                _where->print();
+            }
+            _chstmt->print();
+        }
+    private:
+        object_name_node _name;
+        match_body_node* _body;
+        std::optional<where_stmt_node> _where;
+        chstate_stmt *_chstmt;
+    };
+
 
 };
 

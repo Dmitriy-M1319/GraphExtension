@@ -37,14 +37,14 @@ MATCH FROM graph_name (p1:Person)-[r:]->(p2:Person) DELETE r;
 stmt: create_stmt
     | match_stmt;
 
-create_stmt: CREATE GRAPH obj_name vertices_list ',' edges_list;
+create_stmt: CREATE GRAPH obj_name vertices_list ',' optional<edges_list>;
 
-match_stmt: MATCH FROM obj_name match_body where_stmt chstate_stmts;
+match_stmt: MATCH FROM obj_name match_body optional<where_stmt> chstate_stmts;
 
 match_body: egde_assign
            | vertices_list;
 
-edge_assign: obj_name '=' edges_list
+edge_assign: optional<obj_name> '=' edges_list
            | edges_list;
 
 where_stmt: WHERE assign

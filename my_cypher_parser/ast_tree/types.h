@@ -18,6 +18,9 @@ namespace cypher::tree {
         DELETE_STMT,
         WHERE_STMT,
         EDGE_ASSIGN,
+        MATCH_BODY,
+        MATCH_STMT,
+        CREATE_STMT,
     };
 
 };
