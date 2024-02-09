@@ -13,10 +13,10 @@ namespace cypher::tree {
             std::copy(list.begin(), list.end(), _childs.begin());
         }
 
-        void print() override {
+        void print() const override {
             std::cout << "Vertex key-value map:" << std::endl;
-            for (auto& p : _childs) {
-                p.print(); 
+            for (const auto p : _childs) {
+                p->print(); 
                 std::cout << std::endl;
             }
         }

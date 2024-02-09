@@ -12,7 +12,7 @@ namespace cypher::tree {
         {
             _type = ast_node_types::LABEL;
         }
-        void print() override {
+        void print() const override {
             std::cout << "label value: " << _label;
         }
 

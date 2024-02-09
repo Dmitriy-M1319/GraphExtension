@@ -12,7 +12,7 @@ namespace cypher::tree {
         {
             _type = ast_node_types::OBJECT_NAME;
         }
-        void print() override {
+        void print() const override {
             std::cout << "object value: " << _name;
         }
 

@@ -9,19 +9,19 @@ namespace cypher::tree {
     class ast_node {
     public:
         // Пока что так, позже перегрузим оператор <<
-        virtual void print() = 0;
+        virtual void print() const = 0;
 
-        const std::vector<ast_node>& get_childs() {
+        const std::vector<ast_node*>& get_childs() const {
             return _childs;
         }
 
-        const ast_node* const get_parent() {
+        const ast_node* const get_parent() const {
             return _parent;
         }
 
         virtual ~ast_node(){};
     protected:
-        std::vector<ast_node> _childs;
+        std::vector<ast_node *> _childs;
         ast_node *_parent;
         ast_node_types _type;
     };
