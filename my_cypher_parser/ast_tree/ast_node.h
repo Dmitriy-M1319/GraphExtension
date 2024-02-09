@@ -15,14 +15,9 @@ namespace cypher::tree {
             return _childs;
         }
 
-        const ast_node* const get_parent() const {
-            return _parent;
-        }
-
         virtual ~ast_node(){};
     protected:
         std::vector<ast_node *> _childs;
-        ast_node *_parent;
         ast_node_types _type;
     };
 };

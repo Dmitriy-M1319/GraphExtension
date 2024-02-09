@@ -13,8 +13,8 @@ namespace cypher::tree {
     
     class assign_node : public ast_node {
     public:
-        assign_node(object_name_node *name, const std::string& value):
-            _name{name}, _value{value} 
+        assign_node(object_name_node *name, const std::string& prop, const std::string& value):
+            _name{name}, _prop{prop}, _value{value} 
         {
             _childs.push_back(_name);
             _type = ast_node_types::ASSIGN;    
@@ -28,12 +28,12 @@ namespace cypher::tree {
     private:
         object_name_node *_name;
         std::string _value;
+        std::string _prop;
     };
 
     class object_list_node : public ast_node {
     public:
-        object_list_node(const std::vector<object_name_node *>& list, ast_node *parent) {
-            _parent = parent;
+        object_list_node(const std::vector<object_name_node *>& list) {
             _type = ast_node_types::OBJECT_LIST;
             std::copy(list.begin(), list.end(), _childs.begin());
         }
@@ -49,8 +49,7 @@ namespace cypher::tree {
 
     class return_stmt_node : public chstate_stmt {
     public:
-        return_stmt_node(object_list_node *list, ast_node *parent): _objects(list) {
-            _parent = parent;
+        return_stmt_node(object_list_node *list): _objects(list) {
             _type = ast_node_types::RETURN_STMT;
             _childs.push_back(list);
         }
@@ -65,8 +64,7 @@ namespace cypher::tree {
 
     class set_stmt_node : public chstate_stmt {
     public:
-        set_stmt_node(assign_node *assnina, ast_node *parent): _ass(assnina) {
-            _parent = parent;
+        set_stmt_node(assign_node *assnina): _ass(assnina) {
             _type = ast_node_types::SET_STMT;
             _childs.push_back(assnina);
         }
@@ -81,8 +79,7 @@ namespace cypher::tree {
 
     class delete_stmt_node : public chstate_stmt {
     public:
-        delete_stmt_node(object_name_node *name, ast_node *parent): _name(name) {
-            _parent = parent;
+        delete_stmt_node(object_name_node *name): _name(name) {
             _type = ast_node_types::DELETE_STMT;
             _childs.push_back(name);
         }
@@ -97,8 +94,7 @@ namespace cypher::tree {
 
     class where_stmt_node : public ast_node {
     public:
-        where_stmt_node(assign_node *assnina, ast_node *parent): _ass(assnina) {
-            _parent = parent;
+        where_stmt_node(assign_node *assnina): _ass(assnina) {
             _type = ast_node_types::WHERE_STMT;
             _childs.push_back(assnina);
         }
@@ -114,8 +110,7 @@ namespace cypher::tree {
     class edge_assign_node : public match_body_node {
     public:
         edge_assign_node(edges_list *lst, 
-                std::optional<object_name_node *> name, ast_node *parent): _lst(lst), _name(name) {
-            _parent = parent;
+                std::optional<object_name_node *> name): _lst(lst), _name(name) {
             _type = ast_node_types::EDGE_ASSIGN;
             _childs.push_back(lst);
             if(name) {
@@ -142,9 +137,7 @@ namespace cypher::tree {
         match_stmt_node(object_name_node *name,
             match_body_node* body,
             std::optional<where_stmt_node *> where_stmt,
-            chstate_stmt *chstmt,
-            ast_node *parent): _name(name), _body_ptr(std::move(body)), _where(where_stmt), _chstmt_ptr(std::move(chstmt)) {
-            _parent = parent;
+            chstate_stmt *chstmt): _name(name), _body_ptr(std::move(body)), _where(where_stmt), _chstmt_ptr(std::move(chstmt)) {
             _type = ast_node_types::MATCH_STMT;
             _childs.push_back(name);
             _childs.push_back(body);
@@ -174,9 +167,7 @@ namespace cypher::tree {
     public:
         create_stmt_node(object_name_node *name,
             vertices_list_node *list,
-            std::optional<edges_list *> edges,
-            ast_node *parent) : _name(name), _list(list), _edges(edges) {
-            _parent = parent;
+            std::optional<edges_list *> edges) : _name(name), _list(list), _edges(edges) {
             _type = ast_node_types::CREATE_STMT;
             _childs.push_back(name);
             _childs.push_back(list);

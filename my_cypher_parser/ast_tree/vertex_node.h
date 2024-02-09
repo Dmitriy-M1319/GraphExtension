@@ -4,20 +4,21 @@
 #include "label_node.h"
 #include "object_name_node.h"
 #include "vertex_body_node.h"
+#include <optional>
 
 namespace cypher::tree {
     class vertex_node : public ast_node {
     public:
-        vertex_node(vertex_body_node *body, 
+        vertex_node(std::optional<vertex_body_node *> body, 
                 label_node *label,
-                object_name_node *name,
-                ast_node *parent): _body{body}, _label{label}, _name{name} 
+                object_name_node *name): _body{body}, _label{label}, _name{name} 
         {
-            _parent = parent;
             _type = ast_node_types::VERTEX;
             _childs.push_back(name);
             _childs.push_back(label);
-            _childs.push_back(body);
+            if(body) {
+                _childs.push_back(body.value());
+            }
         }
 
         void print() const override {
@@ -27,7 +28,7 @@ namespace cypher::tree {
             }
         }
     private:
-        vertex_body_node *_body;
+        std::optional<vertex_body_node *> _body;
         label_node *_label;
         object_name_node *_name;
     };

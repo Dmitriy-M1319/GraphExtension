@@ -13,10 +13,8 @@ namespace cypher::tree {
         edge_node(object_name_node *name,
             label_node *label,
             vertices_list_node *rhs,
-            vertices_list_node *lhs,
-            ast_node *parent): _name(name), _label(label), _rhs(rhs), _lhs(lhs)
+            vertices_list_node *lhs): _name(name), _label(label), _rhs(rhs), _lhs(lhs)
         {
-            _parent = parent;
             _childs.push_back(_name);
             _childs.push_back(_label);
             _childs.push_back(_rhs);
@@ -39,8 +37,7 @@ namespace cypher::tree {
 
     class edges_list : public ast_node {
     public:
-        edges_list(const std::vector<edge_node *>& list, ast_node *parent) {
-            _parent = parent;
+        edges_list(const std::vector<edge_node *>& list) {
             _type = ast_node_types::EDGES_LIST;
             std::copy(list.begin(), list.end(), _childs.begin());
         }

@@ -8,8 +8,7 @@ namespace cypher::tree {
 
     class vertices_list_node : public match_body_node {
     public:
-        vertices_list_node(const std::vector<vertex_node *>& list, ast_node *parent) {
-            _parent = parent;
+        vertices_list_node(const std::vector<vertex_node *>& list) {
             _type = ast_node_types::VERTICES_LIST;
             std::copy(list.begin(), list.end(), _childs.begin());
         }
