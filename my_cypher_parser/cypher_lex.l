@@ -2,7 +2,7 @@
 
 %{
 
-#include "cypher.tab.hh"
+#include "astgrammar.tab.hh"
 
 %}
 
@@ -18,7 +18,7 @@ LABEL       [a-zA-Z]+
 {WS}                    /* skip */
 CREATE                  { return yy::parser::token_type::CREATE; }
 MATCH                   { return yy::parser::token_type::MATCH; }
-FROM                    { return yy::parser::token_type::FROM; }
+FROM                    { return yy::parser::token_type::FROMKEYWORD; }
 WHERE                   { return yy::parser::token_type::WHERE; }
 RETURN                  { return yy::parser::token_type::RETURN; }
 SET                     { return yy::parser::token_type::SET; }
@@ -39,8 +39,8 @@ GRAPH                   { return yy::parser::token_type::GRAPH; }
 "."                     { return yy::parser::token_type::POINT; }
 {DIGIT1}{DIGIT}*        { return yy::parser::token_type::NUMBER; }
 \"{LABEL}\"             { return yy::parser::token_type::STR_VALUE; }
-{OBJ_NAME}              { return yy::parser::token_type::OBJ_NAME; }
-{LABEL}                 { return yy::parser::token_type::LABEL; }
+{OBJ_NAME}              { return yy::parser::token_type::OBJECT_NAME; }
+{LABEL}                 { return yy::parser::token_type::LABEL_TYPE; }
 .                       { return yy::parser::token_type::UNKNOWN; }       
 
 %%

@@ -5,6 +5,7 @@
 #include "label_node.h"
 #include "object_name_node.h"
 #include "vertices_list.h"
+#include <iterator>
 
 namespace cypher::tree {
     
@@ -35,11 +36,11 @@ namespace cypher::tree {
         vertices_list_node *_lhs;
     };
 
-    class edges_list : public ast_node {
+    class edges_list_node : public ast_node {
     public:
-        edges_list(const std::vector<edge_node *>& list) {
+        edges_list_node(const std::vector<ast_node *>& list) {
             _type = ast_node_types::EDGES_LIST;
-            std::copy(list.begin(), list.end(), _childs.begin());
+            std::copy(list.begin(), list.end(), std::back_inserter(_childs));
         }
 
         void print() const override {

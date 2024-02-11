@@ -15,6 +15,10 @@ namespace cypher::tree {
             return _childs;
         }
 
+        void add_child(ast_node *node) {
+            _childs.push_back(node);
+        }
+
         virtual ~ast_node(){};
     protected:
         std::vector<ast_node *> _childs;

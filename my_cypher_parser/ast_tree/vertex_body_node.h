@@ -3,13 +3,14 @@
 
 #include "key_value_node.h"
 #include <algorithm>
+#include <iterator>
 
 namespace cypher::tree {
    
     class vertex_body_node : public ast_node {
     public:
-        vertex_body_node(const std::vector<key_value_node>& list) {
-            std::copy(list.begin(), list.end(), _childs.begin());
+        vertex_body_node(const std::vector<ast_node *>& list) {
+            std::copy(list.begin(), list.end(), std::back_inserter(_childs));
         }
 
         void print() const override {

@@ -5,6 +5,7 @@
 #include "object_name_node.h"
 #include "base_nodes.h"
 #include "edge_nodes.h"
+#include <iterator>
 #include <memory>
 #include <optional>
 #include <string>
@@ -33,9 +34,9 @@ namespace cypher::tree {
 
     class object_list_node : public ast_node {
     public:
-        object_list_node(const std::vector<object_name_node *>& list) {
+        object_list_node(const std::vector<ast_node *>& list) {
             _type = ast_node_types::OBJECT_LIST;
-            std::copy(list.begin(), list.end(), _childs.begin());
+            std::copy(list.begin(), list.end(), std::back_inserter(_childs));
         }
 
         void print() const override {
@@ -109,7 +110,7 @@ namespace cypher::tree {
     
     class edge_assign_node : public match_body_node {
     public:
-        edge_assign_node(edges_list *lst, 
+        edge_assign_node(edges_list_node *lst, 
                 std::optional<object_name_node *> name): _lst(lst), _name(name) {
             _type = ast_node_types::EDGE_ASSIGN;
             _childs.push_back(lst);
@@ -127,7 +128,7 @@ namespace cypher::tree {
             _lst->print();
         }
     private:
-        edges_list *_lst;
+        edges_list_node *_lst;
         std::optional<object_name_node *> _name;
     };
 
@@ -167,7 +168,7 @@ namespace cypher::tree {
     public:
         create_stmt_node(object_name_node *name,
             vertices_list_node *list,
-            std::optional<edges_list *> edges) : _name(name), _list(list), _edges(edges) {
+            std::optional<edges_list_node *> edges) : _name(name), _list(list), _edges(edges) {
             _type = ast_node_types::CREATE_STMT;
             _childs.push_back(name);
             _childs.push_back(list);
@@ -186,7 +187,7 @@ namespace cypher::tree {
     private:
         object_name_node *_name;
         vertices_list_node *_list;
-        std::optional<std::shared_ptr<edges_list>> _edges;
+        std::optional<edges_list_node *> _edges;
     };
 
 };

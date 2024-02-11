@@ -1,5 +1,7 @@
 #include <FlexLexer.h>
 
+#include "astdriver.hpp"
+
 int yyFlexLexer::yywrap() 
 {
     return 1;
@@ -8,10 +10,8 @@ int yyFlexLexer::yywrap()
 int main(void)
 {
     FlexLexer *lexer = new yyFlexLexer;
-    while(lexer->yylex() != 0) {
-        // do nothing
-    }
-
+    yy::AstDriver driver{lexer};
+    driver.parse(); 
     delete lexer;
     return 0;
 }
