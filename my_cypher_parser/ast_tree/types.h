@@ -3,6 +3,7 @@
 
 namespace cypher::tree {
     enum class ast_node_types {
+        EMPTY,
         OBJECT_NAME,
         LABEL,
         KEY_VALUE,

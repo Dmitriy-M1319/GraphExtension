@@ -1,6 +1,7 @@
 #ifndef VERTEX_NODE_H
 #define VERTEX_NODE_H
 
+#include "ast_node.h"
 #include "label_node.h"
 #include "object_name_node.h"
 #include "vertex_body_node.h"
@@ -9,6 +10,8 @@
 namespace cypher::tree {
     class vertex_node : public ast_node {
     public:
+        vertex_node(): ast_node(), _body{std::nullopt}, _label{nullptr}, _name{nullptr} {}
+
         vertex_node(std::optional<vertex_body_node *> body, 
                 label_node *label,
                 object_name_node *name): _body{body}, _label{label}, _name{name} 

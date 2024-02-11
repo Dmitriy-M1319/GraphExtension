@@ -5,10 +5,10 @@
 #include <vector>
 
 namespace cypher::tree {
-// Базовый класс узла синтаксического дерева
     class ast_node {
     public:
-        // Пока что так, позже перегрузим оператор <<
+        ast_node(): _childs({}), _type{ast_node_types::EMPTY} {}
+
         virtual void print() const = 0;
 
         const std::vector<ast_node*>& get_childs() const {

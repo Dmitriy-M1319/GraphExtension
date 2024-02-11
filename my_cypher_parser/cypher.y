@@ -138,7 +138,7 @@ edge_assign: obj_name ASSIGN edges_list { $$ = std::make_shared<edge_assign_node
 ;
 
 where_stmt: WHERE assign { $$ = std::make_shared<where_stmt_node>($2.get()); }
-          | EMPTY {}
+          | EMPTY {$$ = std::make_shared<where_stmt_node>(); }
 ;
 
 chstate_stmts: set_stmt {$$ = $1;}
@@ -193,7 +193,7 @@ vertices_list: LBRACE vertex COMMA vertices_list RBRACE {
 
 vertex: obj_name COLON label LPAREN vertex_body RPAREN { $$ = std::make_shared<vertex_node>($5.get(), $3.get(), $1.get()); }
       | obj_name COLON label {$$ = std::make_shared<vertex_node>(std::nullopt, $3.get(), $1.get()); }
-      | EMPTY { /* Пока не понимаю, что надо впихнуть, потом придумаю пустой конструктор */}
+      | EMPTY { $$ = std::make_shared<vertex_node>(); }
 ;
 
 vertex_body: key_value COMMA vertex_body {

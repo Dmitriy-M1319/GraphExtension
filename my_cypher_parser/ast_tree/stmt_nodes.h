@@ -95,6 +95,7 @@ namespace cypher::tree {
 
     class where_stmt_node : public ast_node {
     public:
+        where_stmt_node() : ast_node(), _ass{nullptr} {}
         where_stmt_node(assign_node *assnina): _ass(assnina) {
             _type = ast_node_types::WHERE_STMT;
             _childs.push_back(assnina);
