@@ -10,18 +10,17 @@
 namespace cypher::tree {
     class vertex_node : public ast_node {
     public:
-        vertex_node(): ast_node(), _body{std::nullopt}, _label{nullptr}, _name{nullptr} {}
+        using body_opt = std::optional<std::shared_ptr<vertex_body_node>>;
+        using label_opt = std::optional<std::shared_ptr<label_node>>;
+        using name_opt = std::optional<std::shared_ptr<object_name_node>>;
 
-        vertex_node(std::optional<vertex_body_node *> body, 
-                label_node *label,
-                object_name_node *name): _body{body}, _label{label}, _name{name} 
+        vertex_node(): ast_node(), _body{std::nullopt}, _label{std::nullopt}, _name{std::nullopt} {}
+
+        vertex_node(body_opt&& body, 
+                label_opt&& label,
+                name_opt&& name): _body{std::move(body)}, _label{std::move(label)}, _name{std::move(name)} 
         {
             _type = ast_node_types::VERTEX;
-            _childs.push_back(name);
-            _childs.push_back(label);
-            if(body) {
-                _childs.push_back(body.value());
-            }
         }
 
         void print() const override {
@@ -31,10 +30,10 @@ namespace cypher::tree {
             }
         }
     private:
-        std::optional<vertex_body_node *> _body;
-        label_node *_label;
-        object_name_node *_name;
+        body_opt _body;
+        label_opt _label;
+        name_opt _name;
     };
-}
+};
 
 #endif

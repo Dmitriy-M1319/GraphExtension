@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include <vector>
+#include <memory>
 
 namespace cypher::tree {
     class ast_node {

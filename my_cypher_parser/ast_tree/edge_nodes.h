@@ -11,16 +11,15 @@ namespace cypher::tree {
     
     class edge_node : public ast_node {
     public:
-        edge_node(object_name_node *name,
-            label_node *label,
-            vertices_list_node *rhs,
-            vertices_list_node *lhs): _name(name), _label(label), _rhs(rhs), _lhs(lhs)
-        {
-            _childs.push_back(_name);
-            _childs.push_back(_label);
-            _childs.push_back(_rhs);
-            _childs.push_back(_lhs);
-        }
+        using list_opt = std::optional<std::shared_ptr<vertices_list_node>>;
+        using label_opt = std::optional<std::shared_ptr<label_node>>;
+        using name_opt = std::optional<std::shared_ptr<object_name_node>>;
+
+        edge_node(name_opt&& name,
+            label_opt&& label,
+            list_opt&& rhs,
+            list_opt&& lhs): _name(std::move(name)), _label(std::move(label)), _rhs(std::move(rhs)), _lhs(std::move(lhs))
+        { /* потом подумать над детьми */ }
 
         void print() const override {
             std::cout << "Edge: " << std::endl;
@@ -30,10 +29,10 @@ namespace cypher::tree {
             }
         }
     private:
-        object_name_node *_name;
-        label_node *_label;
-        vertices_list_node *_rhs;
-        vertices_list_node *_lhs;
+        name_opt _name;
+        label_opt _label;
+        list_opt _rhs;
+        list_opt _lhs;
     };
 
     class edges_list_node : public ast_node {

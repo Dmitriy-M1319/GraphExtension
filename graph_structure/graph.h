@@ -86,8 +86,6 @@ public:
 		return nodes_.end();
 	}
 
-	
-
 	unsigned int add_node(const T& value) {
 		node_t node(curr_id_, value);
 		nodes_.push_back(node);

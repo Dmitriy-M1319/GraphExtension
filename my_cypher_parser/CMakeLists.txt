@@ -12,7 +12,7 @@ flex_target(scanner
 bison_target(parser
     cypher.y 
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
-    COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/astgrammar.tab.hh"
+    COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/astgrammar.tab.hh --debug"
 )
 
 add_flex_bison_dependency(scanner parser)

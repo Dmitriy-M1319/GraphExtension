@@ -1,1 +1,1 @@
-MATCH FROM graph res = (:Person{name: "Pam"})-[:PARENT]->(:Person{name: "Bob"}) RETURN res ;
+MATCH FROM graph res = (:Person{name: "Pam"})-[:PARENT]->(:Person{age: 18}) RETURN res ;
