@@ -27,7 +27,7 @@ namespace cypher::tree {
         void print() const override {
             std::cout << "Vertex key-value map:" << std::endl;
             for (const auto p : _nodes) {
-                p.get()->print(); 
+                p->print(); 
                 std::cout << std::endl;
             }
         }

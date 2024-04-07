@@ -18,12 +18,16 @@ public:
 
     parser::token_type yylex(parser::semantic_type *yylval) {
         parser::token_type tt = static_cast<parser::token_type>(plex_->yylex());
-        if (tt == yy::parser::token_type::NUMBER)
-            yylval->as<int>() = std::stoi(plex_->YYText());
+        if (tt == yy::parser::token_type::NUMBER) {
+            int value = std::stoi(plex_->YYText());
+            yylval->as<int>() = value;
+        }
         if (tt == yy::parser::token_type::STR_VALUE ||
                 tt == yy::parser::token_type::OBJECT_NAME ||
-                tt == yy::parser::token_type::LABEL_TYPE)
-            yylval->as<std::string>() = std::string(plex_->YYText());
+                tt == yy::parser::token_type::LABEL_TYPE) {
+            std::string value(plex_->YYText());
+            yylval->as<std::string>() = value;
+        }
         return tt;
     }
 

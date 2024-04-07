@@ -2,12 +2,11 @@
 #define VERTICES_LIST_NODE_H
 
 #include "vertex_node.h"
-#include "base_nodes.h"
 #include <algorithm>
 
 namespace cypher::tree {
 
-    class vertices_list_node : public match_body_node {
+    class vertices_list_node : public ast_node {
     public:
         vertices_list_node(const std::vector<std::shared_ptr<vertex_node>>& list) {
             std::move(list.begin(), list.end(), std::back_inserter(_nodes));
@@ -27,9 +26,8 @@ namespace cypher::tree {
 
         void print() const override {
             std::cout << "Vertices list:" << std::endl;
-            for (const auto p : _childs) {
+            for (const auto p : _nodes) {
                 p->print();
-                std::cout << std::endl;
             }
         }
     private:

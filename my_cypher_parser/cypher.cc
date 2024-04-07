@@ -13,6 +13,7 @@ int main(void)
     lexer->set_debug(1);
     yy::AstDriver driver{lexer};
     driver.parse();
+    driver.print_tree();
     delete lexer;
     return 0;
 }

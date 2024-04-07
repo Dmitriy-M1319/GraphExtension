@@ -4,6 +4,8 @@ project(cypher_parser)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
+
 flex_target(scanner
     cypher_lex.l
     ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
@@ -12,7 +14,7 @@ flex_target(scanner
 bison_target(parser
     cypher.y 
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
-    COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/astgrammar.tab.hh --debug"
+    COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/astgrammar.tab.hh --debug --graph"
 )
 
 add_flex_bison_dependency(scanner parser)

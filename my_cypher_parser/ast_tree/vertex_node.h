@@ -25,9 +25,13 @@ namespace cypher::tree {
 
         void print() const override {
             std::cout << "Vertex" << std::endl;
-            for (const auto p : _childs) {
-                p->print(); 
-            }
+            if(_name.has_value())
+                _name.value()->print();
+            if(_label.has_value())
+                _label.value()->print();
+            if(_body.has_value())
+                _body.value()->print();
+            std::cout << std::endl << std::endl;
         }
     private:
         body_opt _body;

@@ -23,10 +23,14 @@ namespace cypher::tree {
 
         void print() const override {
             std::cout << "Edge: " << std::endl;
-            for (const auto p : _childs) {
-                p->print();
-                std::cout << std::endl;
-            }
+            if(_name.has_value())
+                _name.value()->print();
+            if(_label.has_value())
+                _label.value()->print();
+            if(_rhs.has_value())
+                _rhs.value()->print();
+            if(_lhs.has_value())
+                _lhs.value()->print();
         }
     private:
         name_opt _name;
@@ -37,19 +41,31 @@ namespace cypher::tree {
 
     class edges_list_node : public ast_node {
     public:
-        edges_list_node(const std::vector<ast_node *>& list) {
-            _type = ast_node_types::EDGES_LIST;
-            std::copy(list.begin(), list.end(), std::back_inserter(_childs));
+        edges_list_node(const std::vector<std::shared_ptr<edge_node>>& list) {
+            std::move(list.begin(), list.end(), std::back_inserter(_nodes));
+        }
+
+        void append(std::shared_ptr<edges_list_node>&& node) {
+            std::move(node->_nodes.begin(), node->_nodes.end(), std::back_inserter(_nodes));
+        }
+
+        void append(std::shared_ptr<edge_node>&& node) {
+            _nodes.emplace_back(std::move(node));
+        }
+
+        edges_list_node(std::shared_ptr<edges_list_node>&& node) {
+            this->append(std::move(node));
         }
 
         void print() const override {
             std::cout << "Edges list:" << std::endl;
-            for (const auto p : _childs) {
+            for (const auto p : _nodes) {
                 p->print();
-                std::cout << std::endl;
             }
         }
+    private:
+        std::vector<std::shared_ptr<edge_node>> _nodes;
     };
-}
+};
 
 #endif
