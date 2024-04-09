@@ -24,11 +24,12 @@ namespace cypher::tree {
             this->append(std::move(node));
         }
 
-        void print() const override {
-            std::cout << "Vertex key-value map:" << std::endl;
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- vertex body:" << std::endl;
             for (const auto p : _nodes) {
-                p->print(); 
-                std::cout << std::endl;
+                p->print(tabs + 2); 
             }
         }
     private:

@@ -23,13 +23,22 @@ namespace cypher::tree {
             _type = ast_node_types::KEY_VALUE;    
         }
 
-        void print() const override {
-            std::cout << "key-value: " << std::endl;
-            _key->print();
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- key-value: " << std::endl;
+
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << " | key: " << std::endl;
+            _key->print(tabs + 2);
+
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
             if(std::holds_alternative<int>(_value))
-                std::cout << "Value: " << std::get<int>(_value) << std::endl;
+                std::cout << " | value: " << std::get<int>(_value) << std::endl;
             else
-                std::cout << "Value: " << std::get<std::string>(_value) << std::endl;
+                std::cout << " | value: " << std::get<std::string>(_value) << std::endl;
         }
         
     private:

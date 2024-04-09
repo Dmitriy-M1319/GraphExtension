@@ -3,7 +3,6 @@
 %skeleton "lalr1.cc"
 %defines
 %define api.value.type variant
-%define parse.trace
 %param {yy::AstDriver* driver}
 
 %code requires {
@@ -117,18 +116,18 @@ UNKNOWN
 
 %%
 
-stmt: create_stmt { auto val = $1; val->print(); driver->create_tree(std::move($1)); }
-    | match_stmt { auto val = $1; val->print(); driver->create_tree(std::move($1)); }
+stmt: create_stmt SEMICOLON { driver->create_tree(std::move($1)); }
+    | match_stmt SEMICOLON { driver->create_tree(std::move($1)); }
 ;
 
-create_stmt: CREATE GRAPH obj_name vertices_list COMMA edges_list { 
+create_stmt: CREATE GRAPH obj_name LBRACE vertices_list RBRACE COMMA LBRACE edges_list RBRACE { 
                 $$ = std::make_shared<create_stmt_node>(std::move(std::make_optional<std::shared_ptr<object_name_node>>($3)),
-                    std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($4)),
-                    std::move(std::make_optional<std::shared_ptr<edges_list_node>>($6))); 
+                    std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($5)),
+                    std::move(std::make_optional<std::shared_ptr<edges_list_node>>($9))); 
                 }
-           | CREATE GRAPH obj_name vertices_list {
+           | CREATE GRAPH obj_name LBRACE vertices_list RBRACE {
                 $$ = std::make_shared<create_stmt_node>(std::move(std::make_optional<std::shared_ptr<object_name_node>>($3)),
-                    std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($4)),
+                    std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($5)),
                     std::nullopt);
                 }
 ;
@@ -187,29 +186,29 @@ assign: obj_name POINT OBJECT_NAME ASSIGN STR_VALUE {
         std::move($3), std::move($5)); }
 ;
 
-edges_list: LBRACE edge COMMA edges_list RBRACE {
-                $4->append(std::move($2));
-                $$ = std::make_shared<edges_list_node>(std::move($4)); 
+edges_list: edge COMMA edges_list {
+                $3->append(std::move($1));
+                $$ = std::make_shared<edges_list_node>(std::move($3)); 
             }
-          | LBRACE edge RBRACE {
-                std::vector<std::shared_ptr<edge_node>> v{$2};
+          | edge {
+                std::vector<std::shared_ptr<edge_node>> v{$1};
                 $$ = std::make_shared<edges_list_node>(v);
             }
 ;
 
-edge: vertices_list FROM LBRACKET obj_name COLON label RBRACKET TO vertices_list { 
-    $$ = std::make_shared<edge_node>(std::move(std::make_optional<std::shared_ptr<object_name_node>>($4)),
-        std::move(std::make_optional<std::shared_ptr<label_node>>($6)),
-        std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($1)),
-        std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($9))); }
+edge: LBRACE vertices_list RBRACE FROM LBRACKET obj_name COLON label RBRACKET TO LBRACE vertices_list RBRACE { 
+    $$ = std::make_shared<edge_node>(std::move(std::make_optional<std::shared_ptr<object_name_node>>($6)),
+        std::move(std::make_optional<std::shared_ptr<label_node>>($8)),
+        std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($2)),
+        std::move(std::make_optional<std::shared_ptr<vertices_list_node>>($12))); }
 ;
 
-vertices_list: LBRACE vertex COMMA vertices_list RBRACE {
-                    $4->append(std::move($2));
-                    $$ = std::make_shared<vertices_list_node>(std::move($4)); 
+vertices_list: vertex COMMA vertices_list {
+                    $3->append(std::move($1));
+                    $$ = std::make_shared<vertices_list_node>(std::move($3)); 
                }
-             | LBRACE vertex RBRACE {
-                    std::vector<std::shared_ptr<vertex_node>> v{$2};
+             | vertex {
+                    std::vector<std::shared_ptr<vertex_node>> v{$1};
                     $$ = std::make_shared<vertices_list_node>(v);
                }
 ;
@@ -235,8 +234,8 @@ vertex_body: key_value COMMA vertex_body {
             }
 ;
 
-label: LABEL_TYPE { $$ = std::make_shared<label_node>($1); $$->print(); }
-     | EMPTY { $$ = std::make_shared<label_node>(""); $$->print(); }
+label: LABEL_TYPE { $$ = std::make_shared<label_node>($1); }
+     | EMPTY { $$ = std::make_shared<label_node>(""); }
 ;
 
 key_value: obj_name COLON STR_VALUE { $$ = std::make_shared<key_value_node>(std::move($1), $3); }

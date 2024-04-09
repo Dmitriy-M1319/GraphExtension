@@ -22,9 +22,14 @@ namespace cypher::tree {
             _type = ast_node_types::ASSIGN;    
         }
 
-        void print() const override {
-            std::cout << "Assign: " << std::endl;
-            _name.value()->print();
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- assign:" << std::endl;
+            _name.value()->print(tabs + 2);
+
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
             std::cout << " = " << _value << std::endl;
         }
     private:
@@ -51,10 +56,12 @@ namespace cypher::tree {
             this->append(std::move(node));
         }
 
-        void print() const override {
-            std::cout << "Object names list:" << std::endl;
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- object list:" << std::endl;
             for (const auto p : _nodes) {
-                p->print();
+                p->print(tabs + 2);
             }
         }
     private:
@@ -69,9 +76,11 @@ namespace cypher::tree {
             _type = ast_node_types::RETURN_STMT;
         }
 
-        void print() const override {
-            std::cout << "Return statement:" << std::endl;
-            _objects.value()->print();
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- return statement:" << std::endl;
+            _objects.value()->print(tabs + 2);
         }
     private:
         names_list_opt _objects;
@@ -85,9 +94,11 @@ namespace cypher::tree {
             _type = ast_node_types::SET_STMT;
         }
 
-        void print() const override {
-            std::cout << "Set statement:" << std::endl;
-            _ass.value()->print();
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- set statement:" << std::endl;
+            _ass.value()->print(tabs + 2);
         }
     private:
         ass_opt _ass;
@@ -101,9 +112,11 @@ namespace cypher::tree {
             _type = ast_node_types::DELETE_STMT;
         }
 
-        void print() const override {
-            std::cout << "Delete statement:" << std::endl;
-            _name.value()->print();
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- delete statement:" << std::endl;
+            _name.value()->print(tabs + 2);
         }
     private:
         name_opt _name;
@@ -116,14 +129,16 @@ namespace cypher::tree {
        chstate_stmt(std::shared_ptr<delete_stmt_node>&& node): _stmt{std::move(node)} {}
        chstate_stmt(std::shared_ptr<return_stmt_node>&& node): _stmt{std::move(node)} {}
 
-       void print() const override {
-           std::cout << "Change statement: " << std::endl;
+       void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+           std::cout << " -- change statement:" << std::endl;
            if(std::holds_alternative<std::shared_ptr<set_stmt_node>>(_stmt))
-                std::get<std::shared_ptr<set_stmt_node>>(_stmt)->print();
+                std::get<std::shared_ptr<set_stmt_node>>(_stmt)->print(tabs + 2);
            else if(std::holds_alternative<std::shared_ptr<delete_stmt_node>>(_stmt))
-                std::get<std::shared_ptr<delete_stmt_node>>(_stmt)->print();
+                std::get<std::shared_ptr<delete_stmt_node>>(_stmt)->print(tabs + 2);
            else
-                std::get<std::shared_ptr<return_stmt_node>>(_stmt)->print();
+                std::get<std::shared_ptr<return_stmt_node>>(_stmt)->print(tabs + 2);
        }
 
     private:
@@ -141,10 +156,13 @@ namespace cypher::tree {
             _type = ast_node_types::WHERE_STMT;
         }
 
-        void print() const override {
-            std::cout << "Where statement:" << std::endl;
-            if(_ass.has_value())
-                _ass.value()->print();
+        void print(int tabs) const override {
+            if(_ass.has_value()) {
+                for(int i = 0; i < tabs; ++i)
+                    std::cout << " ";
+                std::cout << "-- where statement:" << std::endl;
+                _ass.value()->print(tabs);
+            }
         }
     private:
         ass_opt _ass;
@@ -161,13 +179,15 @@ namespace cypher::tree {
             _type = ast_node_types::EDGE_ASSIGN;
         }
 
-        void print() const override {
-            std::cout << "Assign statement:" << std::endl;
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- edge assign statement:" << std::endl;
             if(_name.has_value()) {
-                _name.value()->print();
-                std::cout << " = " << std::endl;
+                _name.value()->print(tabs + 2);
+                std::cout << "| to" << std::endl;
             }
-            _lst.value()->print();
+            _lst.value()->print(tabs + 2);
         }
     private:
         edges_opt _lst;
@@ -179,12 +199,14 @@ namespace cypher::tree {
        match_body_node(std::shared_ptr<edge_assign_node>&& node): _stmt{std::move(node)} {}
        match_body_node(std::shared_ptr<vertices_list_node>&& node): _stmt{std::move(node)} {}
 
-       void print() const override {
-           std::cout << "Match query body: " << std::endl;
+       void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+           std::cout << "-- match query body:" << std::endl;
            if(std::holds_alternative<std::shared_ptr<edge_assign_node>>(_stmt))
-               std::get<std::shared_ptr<edge_assign_node>>(_stmt)->print();
+               std::get<std::shared_ptr<edge_assign_node>>(_stmt)->print(tabs + 2);
            else
-               std::get<std::shared_ptr<vertices_list_node>>(_stmt)->print();
+               std::get<std::shared_ptr<vertices_list_node>>(_stmt)->print(tabs + 2);
        }
 
     private:
@@ -204,14 +226,16 @@ namespace cypher::tree {
             _type = ast_node_types::MATCH_STMT;
         }
 
-        void print() const override {
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
             std::cout << "MATCH query:" << std::endl;
-            _name.value()->print();
-            _body_ptr.value()->print();
+            _name.value()->print(tabs + 2);
+            _body_ptr.value()->print(tabs + 2);
             if(_where.has_value()) {
-                _where.value()->print();
+                _where.value()->print(tabs + 2);
             }
-            _chstmt_ptr.value()->print();
+            _chstmt_ptr.value()->print(tabs + 2);
         }
     private:
         name_opt _name;
@@ -231,14 +255,16 @@ namespace cypher::tree {
         {
             _type = ast_node_types::CREATE_STMT;
         }
-        void print() const override {
-            std::cout << "CREATE statement:" << std::endl;
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "CREATE query:" << std::endl;
             if(_name.has_value())
-                _name.value()->print();
+                _name.value()->print(tabs + 2);
             if(_list.has_value())
-                _list.value()->print();
+                _list.value()->print(tabs + 2);
             if(_edges.has_value()) {
-                _edges.value()->print();
+                _edges.value()->print(tabs + 2);
             }
         }
     private:

@@ -23,15 +23,16 @@ namespace cypher::tree {
             _type = ast_node_types::VERTEX;
         }
 
-        void print() const override {
-            std::cout << "Vertex" << std::endl;
-            if(_name.has_value())
-                _name.value()->print();
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- vertex:" << std::endl;
+            if(_name.has_value()) 
+                _name.value()->print(tabs + 2);
             if(_label.has_value())
-                _label.value()->print();
+                _label.value()->print(tabs + 2);
             if(_body.has_value())
-                _body.value()->print();
-            std::cout << std::endl << std::endl;
+                _body.value()->print(tabs + 2);
         }
     private:
         body_opt _body;

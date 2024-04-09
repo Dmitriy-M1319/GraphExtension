@@ -21,16 +21,18 @@ namespace cypher::tree {
             list_opt&& lhs): _name(std::move(name)), _label(std::move(label)), _rhs(std::move(rhs)), _lhs(std::move(lhs))
         { /* потом подумать над детьми */ }
 
-        void print() const override {
-            std::cout << "Edge: " << std::endl;
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- edge: " << std::endl;
             if(_name.has_value())
-                _name.value()->print();
+                _name.value()->print(tabs + 2);
             if(_label.has_value())
-                _label.value()->print();
+                _label.value()->print(tabs + 2);
             if(_rhs.has_value())
-                _rhs.value()->print();
+                _rhs.value()->print(tabs + 2);
             if(_lhs.has_value())
-                _lhs.value()->print();
+                _lhs.value()->print(tabs + 2);
         }
     private:
         name_opt _name;
@@ -57,10 +59,12 @@ namespace cypher::tree {
             this->append(std::move(node));
         }
 
-        void print() const override {
-            std::cout << "Edges list:" << std::endl;
+        void print(int tabs) const override {
+            for(int i = 0; i < tabs; ++i)
+                std::cout << " ";
+            std::cout << "-- edges list:" << std::endl;
             for (const auto p : _nodes) {
-                p->print();
+                p->print(tabs + 2);
             }
         }
     private:

@@ -9,6 +9,7 @@ set(CMAKE_BUILD_TYPE RelWithDebInfo)
 flex_target(scanner
     cypher_lex.l
     ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
+    #    COMPILE_FLAGS "--debug"
 )
 
 bison_target(parser
@@ -21,8 +22,8 @@ add_flex_bison_dependency(scanner parser)
 
 add_executable(${PROJECT_NAME} 
   cypher.cc  
-  ${BISON_parser_OUTPUTS}
   ${FLEX_scanner_OUTPUTS}
+  ${BISON_parser_OUTPUTS}
 )
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

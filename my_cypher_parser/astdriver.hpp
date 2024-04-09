@@ -36,7 +36,7 @@ public:
     }
 
     void print_tree() const {
-        tree_->print();
+        tree_->print(0);
     }
 
     bool parse() {

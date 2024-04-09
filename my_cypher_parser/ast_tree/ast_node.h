@@ -10,7 +10,7 @@ namespace cypher::tree {
     public:
         ast_node(): _childs({}), _type{ast_node_types::EMPTY} {}
 
-        virtual void print() const = 0;
+        virtual void print(int tabs) const = 0;
 
         const std::vector<ast_node*>& get_childs() const {
             return _childs;
