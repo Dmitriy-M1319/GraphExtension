@@ -9,15 +9,15 @@ CREATE GRAPH graph_name (pam: Person{name: "Pam"}, bob: Person{name: "Bob"}, ...
 MATCH FROM graph_name (p:Person) RETURN p;
 
 2.2 - Поиск по имеющимся связям
-MATCH FROM graph_name res = (:Person{name: "Pam"})-[:PARENT]->(:Person{name: "Bob"}) RETURN res;
-Если вместо метки указано [:], то ищутся все возможные связи
+MATCH FROM graph_name res = ($:Person{name: "Pam"})-[:PARENT]->($:Person{name: "Bob"}) RETURN res;
+Если вместо метки указано [$:$], то ищутся все возможные связи
 
 2.3 - Вывод имеющихся связей (ребер)
 MATCH FROM graph_name (p1:Person)-[:PARENT]->(p2:Person) RETURN p1, p2;
 По итогу формируется таблица связей
 
 2.4 - Вывод всех соседей (по метке ребра или всех возможных)
-MATCH FROM graph_name result = (p1:Person)-[:PARENT]->() RETURN result;
+MATCH FROM graph_name result = (p1:Person)-[$:PARENT]->($:$) RETURN result;
 
 3 - Обновление данных
 MATCH FROM graph_name (p:Person) WHERE p.name="Bob" SET p.age=18;
@@ -28,8 +28,8 @@ MATCH FROM graph_name (p:Person) WHERE p.name="Bob" SET p.age=18;
 MATCH FROM graph_name (p:Person) (WHERE p.name="Bob")? DELETE p;
 Можно сделать удаление по условию
 
-4.2 - Удаление связей (ребер) между узлами
-MATCH FROM graph_name (p1:Person)-[r:]->(p2:Person) DELETE r;
+4.2 - Удаление связей (ребер) между узлам
+MATCH FROM graph_name (p1:Person)-[r:$]->(p2:Person) DELETE r;
 Если указать r:PARENT, то удалятся ребра с меткой PARENT
 
 

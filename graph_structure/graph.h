@@ -1,36 +1,26 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include <memory>
 
 namespace graphs {
 
-// TODO: придумать решение через умные указатели
-template <typename T> class node_t {
+template <typename T> class Vertex {
 public:
-	explicit node_t(unsigned id, const T& item): id_{id}, item_{new T(item)} {}
-	node_t(const node_t<T>& node) {
-		std::cout << "ctor" << std::endl;
-		T* new_item = new T(node.item());
-		item_ = new_item;
-		id_ = node.id();
-	}
-
-	~node_t() {
-		// Здесь должна быть сериализация на диск (возможно)
-		delete item_;
-	}
-
-	node_t& operator=(const node_t& node) {
-		node_t tmp{node};
+	Vertex(unsigned id, std::string label, const T& item): id_{id}, label_{label}, item_{new T(item)} {}
+    Vertex(Vertex&& node): id_{std::move(node.id_)}, label_{std::move(node.label_)}, item_{std::move(node.item_)} {}
+	
+	Vertex& operator=(const Vertex& node) {
+		Vertex tmp{node};
 		std::swap(*this, tmp);
 		return *this;
 	}
-
 
 	const T& item() const noexcept {
 	    return *item_;
@@ -42,30 +32,83 @@ public:
     }
 
 private:
-	T* item_;
+    std::unique_ptr<T> item_;
+    std::string label_;
 	unsigned id_;
 };
 
-template <typename T>
-class graph_t {
+
+
+
+class Edge {
 public:
-    using neighbours_lst = std::vector<node_t<T>*>;
+    Edge(uint32_t fst, uint32_t snd, std::string label = ""):
+        from_{fst}, to_{snd}, label_{label} {}
+
+    uint32_t from() const noexcept {
+        return from_;
+    }
+
+    uint32_t to() const noexcept {
+        return to_;
+    }
+
+    const std::string& label() const noexcept {
+        return label_;
+    }
+
+    void setLabel(const std::string& label) {
+        label_ = label;
+    }
+
+    void setLabel(std::string&& label) {
+        label_ = std::move(label);
+    }
+    
+    void setBidirectional(bool direction) {
+        is_bidirectional_ = direction;
+    }
+
+    void reverseDirection() {
+        std::swap(from_, to_);
+    }
+
+    bool equals(const Edge& e) const noexcept {
+        return e.from() == from_ && e.to() == to_ && e.label() == label_;
+    }
+
+private:
+    bool is_bidirectional_ = false;
+    uint32_t from_;
+    uint32_t to_;
+    std::string label_;
+};
+
+
+
+
+
+
+template <typename T>
+class Graph {
+public:
+    using neighbours_lst = std::vector<Vertex<T>>;
     using graph_itt = typename std::vector<T>::iterator;
     using adj_index_list = std::vector<std::pair<int, int>>;
 
 public:
-	graph_t(): nodes_{}, list_adj_{} {}
+	Graph(): nodes_{}, list_adj_{} {}
 
-	graph_t(std::vector<T> nodes) {
+	Graph(std::vector<T> nodes) {
 		for(const T& val: nodes) {
-			node_t node(curr_id_, val);
+			Vertex node(curr_id_, val);
 			nodes_.push_back(node);
 			++curr_id_;
 		}
 	}
 
-	explicit graph_t(std::vector<T> nodes,
-			const std::vector<std::pair<int, int>>& adjs): graph_t(nodes) {
+	explicit Graph(std::vector<T> nodes,
+			const std::vector<std::pair<int, int>>& adjs): Graph(nodes) {
 
 		std::vector<neighbours_lst> tmp(nodes.size());
 		for(const std::pair<int, int>& adj: adjs) {
@@ -87,7 +130,7 @@ public:
 	}
 
 	unsigned int add_node(const T& value) {
-		node_t node(curr_id_, value);
+		Vertex node(curr_id_, value);
 		nodes_.push_back(node);
 		++curr_id_;
 		list_adj_.push_back({});
@@ -96,11 +139,11 @@ public:
 
 	void add_adjacency(unsigned int first_node, unsigned int second_node) {
 		auto n1 = std::find_if(nodes_.begin(), nodes_.end(), 
-				[&](node_t<T> &node){ return node.id() == first_node; });
+				[&](Vertex<T> &node){ return node.id() == first_node; });
 		if(n1 == nodes_.end())
 			return;
 		auto n2 = std::find_if(nodes_.begin(), nodes_.end(), 
-				[&](node_t<T> &node){ return node.id() == second_node; });
+				[&](Vertex<T> &node){ return node.id() == second_node; });
 		if(n2 == nodes_.end())
 			return;
 
@@ -109,7 +152,7 @@ public:
 
 	const T& find_node_by_id(unsigned int id) const {
 		auto n_iter = std::find_if(nodes_.begin(), nodes_.end(), 
-				[&](const node_t<T> &node){ return node.id() == id; });
+				[&](const Vertex<T> &node){ return node.id() == id; });
 		if(n_iter == nodes_.end())
 			throw std::out_of_range("No such id in graph");
 		else
@@ -117,7 +160,7 @@ public:
 	}
 
 private:
-	std::vector<node_t<T>> nodes_;
+	std::vector<Vertex<T>> nodes_;
 	std::vector<neighbours_lst> list_adj_;
 	unsigned curr_id_ = 1;
 };

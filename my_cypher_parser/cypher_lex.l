@@ -10,11 +10,9 @@
 %}
 
 WS          [ |\t|\n|\v]+
-DIGIT       [0-9]+
-DIGIT1      [1-9]+
 COMMAND     [A-Z]+
 OBJ_NAME    [a-z0-9_]+
-LABEL       [a-zA-Z]+
+LABEL       [a-zA-Z0-9]+
 
 %%
 
@@ -27,6 +25,7 @@ RETURN                  { print(yytext, "RETURN"); return yy::parser::token_type
 SET                     { print(yytext, "SET"); return yy::parser::token_type::SET; }
 DELETE                  { print(yytext, "DELETE"); return yy::parser::token_type::DELETE; }
 GRAPH                   { print(yytext, "GRAPH"); return yy::parser::token_type::GRAPH; }
+"$"                     { print(yytext, "EMPTY"); return yy::parser::token_type::EMPTY; }
 "="                     { print(yytext, "ASSIGN"); return yy::parser::token_type::ASSIGN; }
 "("                     { print(yytext, "LBRACE"); return yy::parser::token_type::LBRACE; }
 ")"                     { print(yytext, "RBRACE"); return yy::parser::token_type::RBRACE; }
@@ -40,7 +39,7 @@ GRAPH                   { print(yytext, "GRAPH"); return yy::parser::token_type:
 "-"                     { print(yytext, "FROM"); return yy::parser::token_type::FROM; }
 ","                     { print(yytext, "COMMA"); return yy::parser::token_type::COMMA; }
 "."                     { print(yytext, "POINT"); return yy::parser::token_type::POINT; }
-{DIGIT1}{DIGIT}*        { print(yytext, "NUMBER"); return yy::parser::token_type::NUMBER; }
+[-+]?[0-9]+             { print(yytext, "NUMBER"); return yy::parser::token_type::NUMBER; }
 \"{LABEL}\"             { print(yytext, "STR_VALUE"); return yy::parser::token_type::STR_VALUE; }
 {OBJ_NAME}              { print(yytext, "OBJECT_NAME"); return yy::parser::token_type::OBJECT_NAME; }
 {LABEL}                 { print(yytext, "LABEL_TYPE"); return yy::parser::token_type::LABEL_TYPE; }

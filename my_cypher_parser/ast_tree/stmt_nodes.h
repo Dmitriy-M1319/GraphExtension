@@ -22,6 +22,12 @@ namespace cypher::tree {
             _type = ast_node_types::ASSIGN;    
         }
 
+        assign_node(name_opt&& name, std::string&& prop, int value):
+            _name{std::move(name)}, _prop{std::move(prop)}, _value{value} 
+        {
+            std::cout << "int ctor" << std::endl;
+            _type = ast_node_types::ASSIGN;    
+        }
         void print(int tabs) const override {
             for(int i = 0; i < tabs; ++i)
                 std::cout << " ";
@@ -30,11 +36,14 @@ namespace cypher::tree {
 
             for(int i = 0; i < tabs; ++i)
                 std::cout << " ";
-            std::cout << " = " << _value << std::endl;
+            if(std::holds_alternative<int>(_value))
+                std::cout << " = " << std::get<int>(_value) << std::endl;
+            else
+                std::cout << " = " << std::get<std::string>(_value) << std::endl;
         }
     private:
         name_opt _name;
-        std::string _value;
+        std::variant<std::string, int> _value;
         std::string _prop;
     };
 

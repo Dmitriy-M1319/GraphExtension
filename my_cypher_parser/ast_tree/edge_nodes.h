@@ -19,7 +19,7 @@ namespace cypher::tree {
             label_opt&& label,
             list_opt&& rhs,
             list_opt&& lhs): _name(std::move(name)), _label(std::move(label)), _rhs(std::move(rhs)), _lhs(std::move(lhs))
-        { /* потом подумать над детьми */ }
+        { }
 
         void print(int tabs) const override {
             for(int i = 0; i < tabs; ++i)

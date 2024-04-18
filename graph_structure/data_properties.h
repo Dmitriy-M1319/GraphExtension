@@ -8,16 +8,18 @@
 #include <vector>
 
 
-namespace data_containers {
+namespace graphs {
     
-class data_properties {
+class VertexProps {
 public:
-	data_properties();
-	data_properties(const std::vector<std::string>& keys,
+	VertexProps();
+	VertexProps(const std::vector<std::string>& keys,
 			const std::vector<std::string>& values);
 
-	const std::string& operator[](std::string key);
-	void insert(const std::string& key, const std::string& value);
+	const std::string& operator[](std::string key) const;
+    std::string& operator[](std::string key);
+
+	void add(const std::string& key, const std::string& value);
 	const std::vector<std::string>& keys() const;
 
 private:

@@ -69,6 +69,7 @@ RETURN
 SET
 DELETE
 GRAPH
+EMPTY       "$"
 ASSIGN      "="
 LBRACE      "("
 RBRACE      ")"
@@ -82,7 +83,6 @@ TO          "->"
 FROM        "-"
 COMMA       ","
 POINT       "."
-EMPTY       ""
 UNKNOWN
 ;
 
@@ -144,7 +144,7 @@ match_stmt: MATCH FROMKEYWORD obj_name match_body where_stmt chstate_stmts {
 ;
 
 match_body: edge_assign {$$ = std::make_shared<match_body_node>(std::move($1)); }
-           | vertices_list {$$ = std::make_shared<match_body_node>(std::move($1)); }
+           | LBRACE vertices_list RBRACE {$$ = std::make_shared<match_body_node>(std::move($2)); }
 ;
 
 edge_assign: obj_name ASSIGN edges_list {
@@ -154,7 +154,6 @@ edge_assign: obj_name ASSIGN edges_list {
 ;
 
 where_stmt: WHERE assign { $$ = std::make_shared<where_stmt_node>(std::move(std::make_optional<std::shared_ptr<assign_node>>($2))); }
-          | EMPTY {$$ = std::make_shared<where_stmt_node>(); }
 ;
 
 chstate_stmts: set_stmt { $$ = std::make_shared<chstate_stmt>(std::move($1));  }
@@ -181,7 +180,10 @@ obj_list: obj_name COMMA obj_list {
           }
 ;
 
-assign: obj_name POINT OBJECT_NAME ASSIGN STR_VALUE { 
+assign: obj_name POINT OBJECT_NAME ASSIGN NUMBER { 
+        $$ = std::make_shared<assign_node>(std::move(std::make_optional<std::shared_ptr<object_name_node>>($1)),
+        std::move($3), $5); }
+      | obj_name POINT OBJECT_NAME ASSIGN STR_VALUE { 
         $$ = std::make_shared<assign_node>(std::move(std::make_optional<std::shared_ptr<object_name_node>>($1)),
         std::move($3), std::move($5)); }
 ;
