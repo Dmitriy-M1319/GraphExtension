@@ -1,3 +1,5 @@
+.idea
 *.o
 build/
 graph_extension
+cmake-build-debug
