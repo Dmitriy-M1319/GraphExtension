@@ -11,7 +11,7 @@ public:
         if(_vault.isVaultOpen() && (_file = std::fopen(propFilename.c_str(), "a+"))) {
             std::fseek(_file, 0, SEEK_END);
             long all_size = std::ftell(_file);
-            _currPropId = all_size / sizeof(prop);
+            _currPropId = all_size / sizeof(Prop);
         }
         std::cout << _currPropId << std::endl;
     }
@@ -24,15 +24,15 @@ public:
         return _file != NULL;
     }
 
-    prop getPropById(unsigned int id) const {
-        prop result{};
+    Prop getPropById(unsigned int id) const {
+        Prop result{};
 
-        if(std::fseek(_file, (id - 1) * sizeof(prop), SEEK_SET) == -1) {
+        if(std::fseek(_file, (id - 1) * sizeof(Prop), SEEK_SET) == -1) {
             std::cout << "seek fatal" << std::endl;
             return result;
         }
         
-        if(std::fread(&result, sizeof(prop), 1, _file) != 1) {
+        if(std::fread(&result, sizeof(Prop), 1, _file) != 1) {
             std::cout << "read fatal" << std::endl;
             return result;
         }
@@ -42,10 +42,10 @@ public:
     }
 
     // TODO: Переписать с использованием std::optional
-    vertex_body getPropsFromId(unsigned int id) const {
-        vertex_body result;
+    VertexBody getPropsFromId(unsigned int id) const {
+        VertexBody result;
         
-        prop first_val = getPropById(id);
+        Prop first_val = getPropById(id);
         if(first_val.keyId && first_val.valueId) {
             while(true) {
                 auto key = _vault.getStrById(first_val.keyId);
@@ -68,19 +68,25 @@ public:
         _vault.append(value);
         unsigned int valueId = _vault.currentId();
         
-        prop newProp = {keyId, valueId};
+        Prop newProp = {keyId, valueId};
         std::fseek(_file, 0, SEEK_END);
-        std::fwrite(&newProp, sizeof(prop), 1, _file);
+        std::fwrite(&newProp, sizeof(Prop), 1, _file);
 
         ++_currPropId;
-        std::fseek(_file, sizeof(prop) + 4, SEEK_END);
+        std::fseek(_file, sizeof(Prop) + 4, SEEK_END);
         std::fwrite(&_currPropId, sizeof(unsigned int), 1, _file);
 
         std::rewind(_file);
     }
 
+    void writePropBody(const VertexBody& body) {
+        for(const auto& p: body) {
+            appendNewProp(p.first, p.second);
+        }
+    }
+
     void setProp(unsigned int propId, const std::string& value) {
-        prop updatedProp = getPropById(propId);
+        Prop updatedProp = getPropById(propId);
         if(updatedProp.valueId) {
             _vault.setStr(updatedProp.valueId, value);
         }
@@ -93,10 +99,10 @@ private:
 };
 
 void seedData() {
-    prop p1 {1, 2, 2};
-    prop p2 {3, 4, 3};
-    prop p3 {5, 6, 4};
-    prop p4 {7, 8, 0};
+    Prop p1 {1, 2, 2};
+    Prop p2 {3, 4, 3};
+    Prop p3 {5, 6, 4};
+    Prop p4 {7, 8, 0};
 
     std::FILE *f = std::fopen("prop_data.bin", "a");
     fwrite(&p1, sizeof(p1), 1, f);

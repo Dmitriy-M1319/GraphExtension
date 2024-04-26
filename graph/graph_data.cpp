@@ -1,18 +1,17 @@
 #include "graph_types.h"
 #include <cstdio>
 #include <cstdlib>
-#include <cassert>
 
-int findEdgeById(unsigned int id, std::FILE *edgeFile, edge *ePtr) {
+int findEdgeById(unsigned int id, std::FILE *edgeFile, Edge *ePtr) {
     if(edgeFile == nullptr || ePtr == nullptr)
         return -1;
         
-    if(std::fseek(edgeFile, id * sizeof(edge), SEEK_SET) == -1) {
+    if(std::fseek(edgeFile, id * sizeof(Edge), SEEK_SET) == -1) {
         std::fprintf(stderr, "Failed to find edge with id %d\n", id);
         return -1;
     }
 
-    if(std::fread(ePtr, sizeof(edge), 1, edgeFile) != 1) {
+    if(std::fread(ePtr, sizeof(Edge), 1, edgeFile) != 1) {
         std::fprintf(stderr, "Failed to read edge with id %d\n", id);
         return -1;
     }
@@ -22,11 +21,11 @@ int findEdgeById(unsigned int id, std::FILE *edgeFile, edge *ePtr) {
 
 }
 
-int writeEdgeToFile(unsigned int id, std::FILE *edgeFile, node *ePtr) {
+int writeEdgeToFile(unsigned int id, std::FILE *edgeFile, Node *ePtr) {
     if(edgeFile == nullptr || ePtr == nullptr)
         return -1;
-    std::fseek(edgeFile, id * sizeof(edge), SEEK_SET);
-    if(std::fwrite(ePtr, sizeof(edge), 1, edgeFile) != 1) {
+    std::fseek(edgeFile, id * sizeof(Edge), SEEK_SET);
+    if(std::fwrite(ePtr, sizeof(Edge), 1, edgeFile) != 1) {
         std::fprintf(stderr, "Failed to write edge with id %d\n", id);
         return -1;
     }
@@ -36,16 +35,16 @@ int writeEdgeToFile(unsigned int id, std::FILE *edgeFile, node *ePtr) {
     
 }
 
-int findNodeById(unsigned int id, std::FILE *nodeFile, node *nPtr) {
+int findNodeById(unsigned int id, std::FILE *nodeFile, Node *nPtr) {
     if(nodeFile == nullptr || nPtr == nullptr)
         return -1;
         
-    if(std::fseek(nodeFile, id * sizeof(node), SEEK_SET) == -1) {
+    if(std::fseek(nodeFile, id * sizeof(Node), SEEK_SET) == -1) {
         std:fprintf(stderr, "Failed to find node with id %d\n", id);
         return -1;
     }
 
-    if(std::fread(nPtr, sizeof(node), 1, nodeFile) != 1) {
+    if(std::fread(nPtr, sizeof(Node), 1, nodeFile) != 1) {
         std::fprintf(stderr, "Failed to read node with id %d\n", id);
         return -1;
     }
@@ -55,11 +54,11 @@ int findNodeById(unsigned int id, std::FILE *nodeFile, node *nPtr) {
 
 }
 
-int writeNodeToFile(unsigned int id, std::FILE *nodeFile, node *nPtr) {
+int writeNodeToFile(unsigned int id, std::FILE *nodeFile, Node *nPtr) {
     if(nodeFile == nullptr)
         return -1;
-    std::fseek(nodeFile, id * sizeof(node), SEEK_SET);
-    if(std::fwrite(nPtr, sizeof(node), 1, nodeFile) != 1) {
+    std::fseek(nodeFile, id * sizeof(Node), SEEK_SET);
+    if(std::fwrite(nPtr, sizeof(Node), 1, nodeFile) != 1) {
         std::fprintf(stderr, "Failed to write node with id %d\n", id);
         return -1;
     }
@@ -71,7 +70,7 @@ int writeNodeToFile(unsigned int id, std::FILE *nodeFile, node *nPtr) {
 
 int main(void) {
     std::FILE *f = std::fopen("data.bin", "w+");
-    node n = {1, 4, 3};
+    Node n = {1, 4, 3};
     if(writeNodeToFile(0, f, &n) < 0) {
         std::puts("Failed to write file");
         std::fclose(f);
@@ -97,7 +96,7 @@ int main(void) {
         std::fclose(f);
         return -1;
     }
-    node *nPtr = (node *)std::malloc(sizeof(node));
+    Node *nPtr = (Node *)std::malloc(sizeof(Node));
     if(findNodeById(4, f, nPtr) < 0) {
         std::puts("Failed to read file");
         std::fclose(f);

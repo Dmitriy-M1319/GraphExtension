@@ -6,7 +6,6 @@
 #include <map>
 
 
-
 class StringVault {
 public:
     StringVault(const std::string& filename);
