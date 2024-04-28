@@ -1,14 +1,14 @@
 #ifndef GRAPH_EXTENSION_PROPVAULT_H
 #define GRAPH_EXTENSION_PROPVAULT_H
 
-#include "graph_types.h"
-#include "strings_vault.h"
+#include "GraphTypes.h"
+#include "StringsVault.h"
+#include <cstdio>
 #include <string>
-#include <iostream>
 
 class PropVault {
 public:
-    PropVault(const std::string propFilename, const std::string strFilename);
+    PropVault(const std::string& propFilename, const std::string& strFilename);
     ~PropVault();
 
     bool isOpen() const;
@@ -17,7 +17,9 @@ public:
 
     void appendNewProp(const std::string& key, const std::string& value);
     void writePropBody(const VertexBody& body);
-    void setProp(unsigned int propId, const std::string& value);
+    void setProp(unsigned int propId,
+                 const std::string& key,
+                 const std::string& value);
 
 private:
     StringVault _vault;

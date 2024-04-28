@@ -1,5 +1,5 @@
 .idea
 *.o
 build/
-graph_extension
+graph/build/
 cmake-build-debug

@@ -1,4 +1,5 @@
-#include "strings_vault.h"
+#include "StringsVault.h"
+#include <utility>
 
 StringVault::StringVault(const std::string& filename): file_(filename, std::ios::in | std::ios::out) {
     if(file_.is_open()) {

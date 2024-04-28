@@ -5,9 +5,9 @@
 #ifndef GRAPH_EXTENSION_NODEEDGEVAULT_H
 #define GRAPH_EXTENSION_NODEEDGEVAULT_H
 
-#include "graph_types.h"
-#include <stdexcept>
+#include "GraphTypes.h"
 #include <cstdio>
+#include <string>
 
 class NodeEdgeVault {
 private:
@@ -19,7 +19,7 @@ public:
     void writeNodeToFile(unsigned int id, Node n);
 
     Edge findEdgeById(unsigned int id) const;
-    void writeEdgeToFile(unsigned int id, Node e);
+    void writeEdgeToFile(unsigned int id, Edge e);
 
     ~NodeEdgeVault();
 };

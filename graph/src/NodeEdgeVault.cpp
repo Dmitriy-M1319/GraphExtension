@@ -3,6 +3,7 @@
 //
 
 #include "NodeEdgeVault.h"
+#include <stdexcept>
 
 NodeEdgeVault::NodeEdgeVault(const std::string& nodesFilename, const std::string& edgesFilename) {
     if(!(_nodesFile = fopen(nodesFilename.c_str(), "w+"))) {
@@ -22,7 +23,7 @@ Node NodeEdgeVault::findNodeById(unsigned int id) const {
         throw std::logic_error(err);
     }
 
-    Node result;
+    Node result{};
 
     if(std::fread(&result, sizeof(Node), 1, _nodesFile) != 1) {
         char err[40];
@@ -61,7 +62,7 @@ Edge NodeEdgeVault::findEdgeById(unsigned int id) const {
     std::rewind(_edgesFile);
     return result;
 }
-void NodeEdgeVault::writeEdgeToFile(unsigned int id, Node e) {
+void NodeEdgeVault::writeEdgeToFile(unsigned int id, Edge e) {
     std::fseek(_edgesFile, id * sizeof(Edge), SEEK_SET);
     if(std::fwrite(&e, sizeof(Edge), 1, _edgesFile) != 1) {
         char err[40];

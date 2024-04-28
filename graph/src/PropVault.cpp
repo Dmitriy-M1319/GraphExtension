@@ -1,7 +1,9 @@
 #include "PropVault.h"
+#include <iostream>
+#include <vector>
 
-PropVault::PropVault(const std::string propFilename,
-          const std::string strFilename): _vault(strFilename) {
+PropVault::PropVault(const std::string& propFilename,
+          const std::string& strFilename): _vault(strFilename) {
     if(_vault.isVaultOpen() && (_file = std::fopen(propFilename.c_str(), "a+"))) {
         std::fseek(_file, 0, SEEK_END);
         long all_size = std::ftell(_file);
@@ -78,9 +80,12 @@ void PropVault::writePropBody(const VertexBody& body) {
     }
 }
 
-void PropVault::setProp(unsigned int propId, const std::string& value) {
+void PropVault::setProp(unsigned int propId,
+                        const std::string& key,
+                        const std::string& value) {
     Prop updatedProp = getPropById(propId);
     if(updatedProp.valueId) {
+        _vault.setStr(updatedProp.keyId, key);
         _vault.setStr(updatedProp.valueId, value);
     }
 }

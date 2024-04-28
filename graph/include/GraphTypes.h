@@ -6,10 +6,11 @@
 #include <string>
 
 using KeyValue = std::pair<std::string, std::string>;
-using Vertex = KeyValue;
+using VertexBody = std::vector<KeyValue>;
+using Vertex = VertexBody;
 using GraphVertices = std::vector<Vertex>;
-using GraphEgdes = std::vector<std::pair<KeyValue , KeyValue>>;
-using VertexBody = std::list<KeyValue>;
+using GraphEgdes = std::vector<std::pair<Vertex, Vertex>>;
+
 
 struct Node {
     unsigned int firstPropId;
@@ -34,6 +35,5 @@ struct Edge {
 };
 
 struct MemoryNode : public Node {
-    // TODO не забыть про то, что тело это список функций
-    KeyValue body;
+    VertexBody body;
 };

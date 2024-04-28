@@ -1,5 +1,5 @@
+#include "StringsVault.h"
 #include <iostream>
-#include "strings_vault.h"
 
 int main(void) {
     StringVault v("./lines.txt");

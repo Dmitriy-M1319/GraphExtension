@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <map>
@@ -8,7 +7,7 @@
 
 class StringVault {
 public:
-    StringVault(const std::string& filename);
+    explicit StringVault(const std::string& filename);
     StringVault(const StringVault&) = delete;
     StringVault& operator=(const StringVault&) = delete;
     ~StringVault();

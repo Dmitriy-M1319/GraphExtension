@@ -2,18 +2,23 @@
 #ifndef GRAPH_EXTENSION_GRAPH_H
 #define GRAPH_EXTENSION_GRAPH_H
 
-#include "graph_types.h"
+#include "GraphTypes.h"
+#include "NodeEdgeVault.h"
 #include "PropVault.h"
+#include <string>
+#include <vector>
 
 class Graph {
 private:
     std::vector<MemoryNode> _localNodes;
-    GraphEgdes _localEdges;
+    std::vector<Edge> _localEdges;
     PropVault _propVault;
     NodeEdgeVault _nodeVault;
 public:
-    Graph(std::string strFilename, std::string propsFilename);
-    Graph(std::string strFilename, std::string propsFilename,
+    Graph(const std::string& strFilename, const std::string& propsFilename,
+          const std::string& edgesFilename, const std::string& nodesFilename);
+    Graph(const std::string& strFilename, const std::string& propsFilename,
+          const std::string& edgesFilename, const std::string& nodesFilename,
           const GraphVertices& vertices, const GraphEgdes& edges);
 
     MemoryNode getNodeById(unsigned int id);
