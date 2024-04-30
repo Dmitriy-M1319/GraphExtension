@@ -89,3 +89,7 @@ void PropVault::setProp(unsigned int propId,
         _vault.setStr(updatedProp.valueId, value);
     }
 }
+
+unsigned int PropVault::currentId() const {
+    return _currPropId;
+}

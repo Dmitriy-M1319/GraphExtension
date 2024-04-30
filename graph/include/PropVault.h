@@ -12,6 +12,7 @@ public:
     ~PropVault();
 
     bool isOpen() const;
+    unsigned int currentId() const;
     Prop getPropById(unsigned int id) const;
     VertexBody getPropsFromId(unsigned int id);
 

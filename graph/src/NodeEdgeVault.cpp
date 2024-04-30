@@ -106,23 +106,32 @@ Edge NodeEdgeVault::getNextForEdgeAndNode(unsigned int edgeId, unsigned int node
 Edge NodeEdgeVault::findFirstEdgeForNode(unsigned int nodeId, unsigned int *outEdgeId) const {
     Edge result{};
     *outEdgeId = 0;
-    if(!nodeId)
+    if (!nodeId)
         return result;
-    int fstId = 1;
-    while(std::fseek(_edgesFile, (fstId - 1) * long(sizeof(Edge)) + long(sizeof(unsigned int)), SEEK_SET) != -1) {
-       unsigned int currFst;
-       if (std::fread(&currFst, sizeof(unsigned int), 1, _edgesFile) != 1) {
-           char err[40];
-           std::snprintf(err, 40, "Failed to read edge part\n" );
-           throw std::logic_error(err);
-       }
+    auto n = findNodeById(nodeId);
+    result = findEdgeById(n.nextEdgeId);
+    *outEdgeId = n.nextEdgeId;
+    return result;
+}
 
-       if(nodeId == currFst) {
-           *outEdgeId = nodeId;
-           return findEdgeById(nodeId);
-       } else {
-           std::fseek(_edgesFile, (-2) * long(sizeof(unsigned int)), SEEK_CUR);
-       }
+unsigned int NodeEdgeVault::findLastEdgeIndexForNode(unsigned int nodeId) const {
+    unsigned int result{};
+    auto n = findNodeById(nodeId);
+    auto currentEdge = findEdgeById(n.nextEdgeId);
+    if((currentEdge.firstNodeId == nodeId && !currentEdge.firstNextEdge) ||
+           (currentEdge.lastNodeId == nodeId && !currentEdge.lastNextEdge)) {
+        return n.nextEdgeId;
+    }
+
+    while ((currentEdge.firstNodeId == nodeId && currentEdge.firstNextEdge) ||
+           (currentEdge.lastNodeId == nodeId && currentEdge.lastNextEdge)) {
+        if (currentEdge.firstNodeId == nodeId) {
+            result = currentEdge.firstNextEdge;
+            currentEdge = findEdgeById(currentEdge.firstNextEdge);
+        } else {
+            result = currentEdge.lastNextEdge;
+            currentEdge = findEdgeById(currentEdge.lastNextEdge);
+        }
     }
     return result;
 }

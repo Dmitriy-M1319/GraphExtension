@@ -24,11 +24,13 @@ public:
 
     void writeEdgeToFile(unsigned int id, Edge e);
 
-    [[nodiscard]] Edge getPrevForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
+    Edge getPrevForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
 
     [[nodiscard]] Edge getNextForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
 
     [[nodiscard]] Edge findFirstEdgeForNode(unsigned int nodeId, unsigned int *outEdgeId) const;
+
+    [[nodiscard]] unsigned int findLastEdgeIndexForNode(unsigned int nodeId) const;
 
     ~NodeEdgeVault();
 };
