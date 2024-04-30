@@ -14,12 +14,21 @@ private:
     std::FILE *_nodesFile;
     std::FILE *_edgesFile;
 public:
-    NodeEdgeVault(const std::string& nodesFilename, const std::string& edgesFilename);
-    Node findNodeById(unsigned int id) const;
+    NodeEdgeVault(const std::string &nodesFilename, const std::string &edgesFilename);
+
+    [[nodiscard]] Node findNodeById(unsigned int id) const;
+
     void writeNodeToFile(unsigned int id, Node n);
 
-    Edge findEdgeById(unsigned int id) const;
+    [[nodiscard]] Edge findEdgeById(unsigned int id) const;
+
     void writeEdgeToFile(unsigned int id, Edge e);
+
+    [[nodiscard]] Edge getPrevForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
+
+    [[nodiscard]] Edge getNextForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
+
+    [[nodiscard]] Edge findFirstEdgeForNode(unsigned int nodeId, unsigned int *outEdgeId) const;
 
     ~NodeEdgeVault();
 };

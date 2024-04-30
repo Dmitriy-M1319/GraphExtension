@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME}
         src/StringsVault.cpp
         src/NodeEdgeVault.cpp
         src/Graph.cpp
+        src/main.cpp
         src/PropVault.cpp ${HEADERS})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

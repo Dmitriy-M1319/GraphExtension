@@ -108,9 +108,38 @@ void Graph::updateNodeBody(unsigned int id, const MemoryNode &node) {
 }
 
 void Graph::deleteNode(unsigned int id) {
+    unsigned int edgeId{};
+    auto e = _nodeVault.findFirstEdgeForNode(id, &edgeId);
+    if(e.firstNodeId) {
+        while(e.firstNextEdge) {
+            auto nextEdge = _nodeVault.findEdgeById(e.firstNextEdge);
+            deleteEdge(edgeId);
+            edgeId = e.firstNextEdge;
+            e = nextEdge;
+        }
+    }
 
+    _nodeVault.writeNodeToFile(id, Node{});
 }
 
 void Graph::deleteEdge(unsigned int id) {
+    auto edge = _nodeVault.findEdgeById(id);
+    Edge firstPrev{}, firstNext{};
+    if(edge.firstPrevEdge)
+        firstPrev = _nodeVault.getPrevForEdgeAndNode(id, edge.firstNodeId);
+    if(edge.firstNextEdge)
+        firstNext = _nodeVault.getNextForEdgeAndNode(id, edge.firstNodeId);
 
+    if(firstNext.firstPrevEdge) {
+        firstNext.firstPrevEdge = edge.firstPrevEdge;
+        _nodeVault.writeEdgeToFile(edge.firstNextEdge, firstNext);
+    }
+
+    if(firstPrev.firstNextEdge) {
+        firstPrev.firstNextEdge = edge.firstNextEdge;
+        _nodeVault.writeEdgeToFile(edge.firstPrevEdge, firstPrev);
+    }
+
+    edge = Edge{};
+    _nodeVault.writeEdgeToFile(id, edge);
 }
