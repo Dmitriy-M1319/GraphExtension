@@ -26,6 +26,9 @@ public:
 
     Edge getPrevForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
 
+    [[nodiscard]] std::vector<Node> filterNodesByLabel(unsigned int labelId, int offset = 0) const;
+    [[nodiscard]] std::vector<Edge> filterEdgesByLabel(unsigned int labelId, int offset = 0) const;
+
     [[nodiscard]] Edge getNextForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
 
     [[nodiscard]] Edge findFirstEdgeForNode(unsigned int nodeId, unsigned int *outEdgeId) const;

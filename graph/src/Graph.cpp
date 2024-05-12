@@ -69,7 +69,7 @@ Graph::Graph(const std::string &strFilename, const std::string &propsFilename, c
     _currentEdgeId = i;
 }
 
-MemoryNode Graph::getNodeById(unsigned int id) {
+MemoryNode Graph::getNodeById(unsigned int id) const {
     if (_localNodes.size() > id) {
         return _localNodes[id - 1];
     } else {
@@ -80,7 +80,7 @@ MemoryNode Graph::getNodeById(unsigned int id) {
     }
 }
 
-Edge Graph::getEdgeById(unsigned int id) {
+Edge Graph::getEdgeById(unsigned int id) const {
     if (_localEdges.size() > id) {
         return _localEdges[id - 1];
     } else {
@@ -151,21 +151,21 @@ void Graph::deleteEdge(unsigned int id) {
 Edge Graph::appendNewEdge(const MemoryNode &first,
                           const MemoryNode &last, const std::string &label) {
     auto fstIter = std::find(_localNodes.begin(), _localNodes.end(), first);
-    if(fstIter == _localNodes.end()) {
+    if (fstIter == _localNodes.end()) {
         //TODO: выкинуть ошибку о том, что узел не найден
         return Edge{};
     }
     unsigned int fstIdx = std::distance(_localNodes.begin(), fstIter) + 1;
 
     auto sndIter = std::find(_localNodes.begin(), _localNodes.end(), last);
-    if(sndIter == _localNodes.end()) {
+    if (sndIter == _localNodes.end()) {
         //TODO: выкинуть ошибку о том, что узел не найден
         return Edge{};
     }
     unsigned int sndIdx = std::distance(_localNodes.begin(), sndIter) + 1;
 
     unsigned int labelId{};
-    if(!label.empty()) {
+    if (!label.empty()) {
         _labelVault.append(label);
         labelId = _labelVault.currentId();
     }
@@ -200,4 +200,52 @@ MemoryNode Graph::appendNewNode(const Vertex &vertex, const std::string &label) 
     MemoryNode result{n.firstPropId, n.nextEdgeId, n.labelId, vertex};
     _localNodes.push_back(result);
     return result;
+}
+
+std::vector<Edge> Graph::getEdgesForNode(const MemoryNode &node) const {
+    std::vector<Edge> result;
+    auto fstIter = std::find(_localNodes.begin(), _localNodes.end(), node);
+    return result;
+}
+
+std::vector<MemoryNode> Graph::getNodesByLabel(const std::string &label) const {
+    std::vector<MemoryNode> result;
+
+    auto strId = _labelVault.findStr(label);
+    if (!strId)
+        return result;
+
+    std::copy_if(_localNodes.begin(), _localNodes.end(), std::back_inserter(result),
+                 [strId](const MemoryNode &m) {
+                     return m.labelId == strId;
+                 });
+
+    auto fileNodes = _nodeVault.filterNodesByLabel(strId, (int)result.size());
+    for (const auto &n: fileNodes) {
+        VertexBody body = _propVault.getPropsFromId(n.firstPropId);
+        result.emplace_back(n.firstPropId, n.nextEdgeId, n.labelId, body);
+    }
+
+    return result;
+}
+
+std::vector<Edge> Graph::getEdgesByLabel(const std::string &label) const {
+    std::vector<Edge> result;
+
+    auto strId = _labelVault.findStr(label);
+    if (!strId)
+        return result;
+
+    std::copy_if(_localEdges.begin(), _localEdges.end(), std::back_inserter(result),
+                 [strId](Edge e) {
+                     return e.labelId == strId;
+                 });
+
+    auto fileEdges = _nodeVault.filterEdgesByLabel(strId, (int)result.size());
+    std::copy(fileEdges.begin(), fileEdges.end(), std::back_inserter(result));
+    return result;
+}
+
+std::vector<MemoryNode> Graph::getNodesContainsBody(VertexBody body) const {
+    return std::vector<MemoryNode>();
 }

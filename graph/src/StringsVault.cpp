@@ -62,3 +62,11 @@ void StringVault::append(std::string&& value) {
 
 }
 
+unsigned int StringVault::findStr(const std::string &value) const {
+    for(const auto& p: db_) {
+        if(p.second == value)
+            return p.first;
+    }
+    return 0;
+}
+

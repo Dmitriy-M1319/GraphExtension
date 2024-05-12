@@ -14,7 +14,7 @@ public:
     bool isOpen() const;
     unsigned int currentId() const;
     Prop getPropById(unsigned int id) const;
-    VertexBody getPropsFromId(unsigned int id);
+    VertexBody getPropsFromId(unsigned int id) const;
 
     void appendNewProp(const std::string& key, const std::string& value);
     void writePropBody(const VertexBody& body);

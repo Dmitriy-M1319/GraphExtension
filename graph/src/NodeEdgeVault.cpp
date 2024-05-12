@@ -135,3 +135,33 @@ unsigned int NodeEdgeVault::findLastEdgeIndexForNode(unsigned int nodeId) const 
     }
     return result;
 }
+
+std::vector<Node> NodeEdgeVault::filterNodesByLabel(unsigned int labelId, int offset) const {
+    std::vector<Node> result;
+    unsigned int startId = offset + 1;
+    std::fseek(_nodesFile, 0, SEEK_END);
+    unsigned int nodesSize = ftell(_nodesFile) / sizeof (Node);
+    fseek(_nodesFile, 0, SEEK_SET);
+
+    for(; startId != nodesSize; ++startId) {
+        auto n = findNodeById(startId);
+        if(n.labelId == labelId)
+            result.push_back(n);
+    }
+    return result;
+}
+
+std::vector<Edge> NodeEdgeVault::filterEdgesByLabel(unsigned int labelId, int offset) const {
+    std::vector<Edge> result;
+    unsigned int startId = offset + 1;
+    std::fseek(_edgesFile, 0, SEEK_END);
+    unsigned int edgesSize = ftell(_edgesFile) / sizeof (Edge);
+    fseek(_edgesFile, 0, SEEK_SET);
+
+    for(; startId != edgesSize; ++startId) {
+        auto e = findEdgeById(startId);
+        if(e.labelId == labelId)
+            result.push_back(e);
+    }
+    return result;
+}

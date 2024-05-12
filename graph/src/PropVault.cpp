@@ -17,7 +17,7 @@ PropVault::~PropVault() {
 }
 
 bool PropVault::isOpen() const {
-    return _file != NULL;
+    return _file != nullptr;
 }
 
 Prop PropVault::getPropById(unsigned int id) const {
@@ -37,7 +37,7 @@ Prop PropVault::getPropById(unsigned int id) const {
     return result;
 }
 
-VertexBody PropVault::getPropsFromId(unsigned int id)  {
+VertexBody PropVault::getPropsFromId(unsigned int id) const {
     VertexBody result;
 
     Prop first_val = getPropById(id);
@@ -45,7 +45,7 @@ VertexBody PropVault::getPropsFromId(unsigned int id)  {
         while(true) {
             auto key = _vault.getStrById(first_val.keyId);
             auto value = _vault.getStrById(first_val.valueId);
-            result.push_back({key, value});
+            result.emplace_back(key, value);
 
             if(first_val.nextPropId)
                 first_val = getPropById(first_val.nextPropId);

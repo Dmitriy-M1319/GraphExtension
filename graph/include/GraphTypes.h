@@ -44,6 +44,7 @@ struct Edge {
 
 struct MemoryNode : public Node {
 public:
+
     VertexBody body;
 
     MemoryNode(unsigned int firstPropId, unsigned int nextEdgeId,

@@ -23,6 +23,8 @@ public:
     void setStr(unsigned int id, const std::string& value);
     void setStr(unsigned int id, std::string&& value);
 
+    unsigned int findStr(const std::string& value) const;
+
     void append(const std::string& value);
     void append(std::string&& value);
 
