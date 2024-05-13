@@ -14,6 +14,14 @@ NodeEdgeVault::NodeEdgeVault(const std::string &nodesFilename, const std::string
         fclose(_nodesFile);
         throw std::logic_error("failed to open edges file");
     }
+
+    std::fseek(_nodesFile, 0, SEEK_END);
+    _nodesCount = (int)(ftell(_nodesFile) / sizeof (Node));
+    fseek(_nodesFile, 0, SEEK_SET);
+
+    std::fseek(_edgesFile, 0, SEEK_END);
+    _edgesCount = (int)(ftell(_edgesFile) / sizeof (Edge));
+    fseek(_edgesFile, 0, SEEK_SET);
 }
 
 Node NodeEdgeVault::findNodeById(unsigned int id) const {
@@ -139,11 +147,7 @@ unsigned int NodeEdgeVault::findLastEdgeIndexForNode(unsigned int nodeId) const 
 std::vector<Node> NodeEdgeVault::filterNodesByLabel(unsigned int labelId, int offset) const {
     std::vector<Node> result;
     unsigned int startId = offset + 1;
-    std::fseek(_nodesFile, 0, SEEK_END);
-    unsigned int nodesSize = ftell(_nodesFile) / sizeof (Node);
-    fseek(_nodesFile, 0, SEEK_SET);
-
-    for(; startId != nodesSize; ++startId) {
+    for(; startId != _nodesCount; ++startId) {
         auto n = findNodeById(startId);
         if(n.labelId == labelId)
             result.push_back(n);
@@ -154,14 +158,21 @@ std::vector<Node> NodeEdgeVault::filterNodesByLabel(unsigned int labelId, int of
 std::vector<Edge> NodeEdgeVault::filterEdgesByLabel(unsigned int labelId, int offset) const {
     std::vector<Edge> result;
     unsigned int startId = offset + 1;
-    std::fseek(_edgesFile, 0, SEEK_END);
-    unsigned int edgesSize = ftell(_edgesFile) / sizeof (Edge);
-    fseek(_edgesFile, 0, SEEK_SET);
 
-    for(; startId != edgesSize; ++startId) {
+    for(; startId != _edgesCount; ++startId) {
         auto e = findEdgeById(startId);
         if(e.labelId == labelId)
             result.push_back(e);
     }
     return result;
+}
+
+unsigned int NodeEdgeVault::getIndexByNode(Node node) const {
+    Node curr;
+    for(unsigned int i = 1; i != _edgesCount; ++i) {
+        curr = findNodeById(i);
+        if(curr == node)
+           return i;
+    }
+    return 0;
 }

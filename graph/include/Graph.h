@@ -9,9 +9,7 @@
 #include <vector>
 
 /*
- * TODO: Написать функции поиска всех ребер для узла в кеше и файле
- * TODO: Написать поиск узлов по содержимому тела
- * TODO: Написать фильтрацию всех ребер по определенным узлам и меткам
+ * TODO: Придумать аналог контейнера запроса LINQ для нод и для ребер (необязательно)
  */
 
 class Graph {
@@ -31,13 +29,13 @@ public:
           const std::string &labelFilename, const std::string &edgesFilename, const std::string &nodesFilename,
           const GraphVertices &vertices, const GraphEgdes &edges);
 
-    std::vector<Edge> getEdgesForNode(const MemoryNode &node) const;
+    std::vector<Edge> getEdgesForNode(const MemoryNode &node);
 
-    std::vector<MemoryNode> getNodesByLabel(const std::string &label) const;
+    std::vector<MemoryNode> getNodesByLabel(const std::string &label);
 
     std::vector<Edge> getEdgesByLabel(const std::string &label) const;
 
-    std::vector<MemoryNode> getNodesContainsBody(VertexBody body) const;
+    std::vector<MemoryNode> getNodesContainsBody(const VertexBody &body) const;
 
     MemoryNode getNodeById(unsigned int id) const;
 

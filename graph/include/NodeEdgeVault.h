@@ -9,10 +9,13 @@
 #include <cstdio>
 #include <string>
 
+
 class NodeEdgeVault {
 private:
     std::FILE *_nodesFile;
     std::FILE *_edgesFile;
+    int _nodesCount;
+    int _edgesCount;
 public:
     NodeEdgeVault(const std::string &nodesFilename, const std::string &edgesFilename);
 
@@ -24,7 +27,8 @@ public:
 
     void writeEdgeToFile(unsigned int id, Edge e);
 
-    Edge getPrevForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
+    [[nodiscard]] Edge getPrevForEdgeAndNode(unsigned int edgeId, unsigned int nodeId) const;
+    unsigned int getIndexByNode(Node node) const;
 
     [[nodiscard]] std::vector<Node> filterNodesByLabel(unsigned int labelId, int offset = 0) const;
     [[nodiscard]] std::vector<Edge> filterEdgesByLabel(unsigned int labelId, int offset = 0) const;

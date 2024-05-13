@@ -122,7 +122,9 @@ void Graph::deleteNode(unsigned int id) {
     }
 
     _nodeVault.writeNodeToFile(id, Node{});
-    //TODO: Написать удаление из кеша нод
+    auto removed = _localNodes.at(id - 1);
+    auto newEnd = std::remove(_localNodes.begin(), _localNodes.end(), removed);
+    _localNodes.erase(newEnd, _localNodes.end());
 }
 
 void Graph::deleteEdge(unsigned int id) {
@@ -145,22 +147,22 @@ void Graph::deleteEdge(unsigned int id) {
 
     edge = Edge{};
     _nodeVault.writeEdgeToFile(id, edge);
-    //TODO: Написать удаление из кеша ребер
+    Edge removed = _localEdges.at(id - 1);
+    auto newEnd = std::remove(_localEdges.begin(), _localEdges.end(), removed);
+    _localEdges.erase(newEnd, _localEdges.end());
 }
 
 Edge Graph::appendNewEdge(const MemoryNode &first,
                           const MemoryNode &last, const std::string &label) {
     auto fstIter = std::find(_localNodes.begin(), _localNodes.end(), first);
     if (fstIter == _localNodes.end()) {
-        //TODO: выкинуть ошибку о том, что узел не найден
-        return Edge{};
+        throw std::logic_error{"Failed to find nodes in cache"};
     }
     unsigned int fstIdx = std::distance(_localNodes.begin(), fstIter) + 1;
 
     auto sndIter = std::find(_localNodes.begin(), _localNodes.end(), last);
     if (sndIter == _localNodes.end()) {
-        //TODO: выкинуть ошибку о том, что узел не найден
-        return Edge{};
+        throw std::logic_error{"Failed to find nodes in cache"};
     }
     unsigned int sndIdx = std::distance(_localNodes.begin(), sndIter) + 1;
 
@@ -202,13 +204,31 @@ MemoryNode Graph::appendNewNode(const Vertex &vertex, const std::string &label) 
     return result;
 }
 
-std::vector<Edge> Graph::getEdgesForNode(const MemoryNode &node) const {
+std::vector<Edge> Graph::getEdgesForNode(const MemoryNode &node) {
     std::vector<Edge> result;
+    long index = 0;
     auto fstIter = std::find(_localNodes.begin(), _localNodes.end(), node);
+    if (fstIter != _localNodes.end()) {
+        index = std::distance(_localNodes.begin(), fstIter);
+    } else {
+        index = _nodeVault.getIndexByNode(static_cast<Node>(node));
+    }
+    auto tmpEdge = _nodeVault.findEdgeById(node.nextEdgeId);
+
+    while (tmpEdge.firstNodeId == index || tmpEdge.lastNodeId == index) {
+        result.push_back(tmpEdge);
+        if (tmpEdge.firstNodeId == index || tmpEdge.firstNextEdge != 0) {
+            tmpEdge = _nodeVault.findEdgeById(tmpEdge.firstNextEdge);
+        } else if (tmpEdge.lastNodeId == index || tmpEdge.lastNextEdge != 0) {
+            tmpEdge = _nodeVault.findEdgeById(tmpEdge.lastNextEdge);
+        } else {
+            break;
+        }
+    }
     return result;
 }
 
-std::vector<MemoryNode> Graph::getNodesByLabel(const std::string &label) const {
+std::vector<MemoryNode> Graph::getNodesByLabel(const std::string &label) {
     std::vector<MemoryNode> result;
 
     auto strId = _labelVault.findStr(label);
@@ -220,7 +240,7 @@ std::vector<MemoryNode> Graph::getNodesByLabel(const std::string &label) const {
                      return m.labelId == strId;
                  });
 
-    auto fileNodes = _nodeVault.filterNodesByLabel(strId, (int)result.size());
+    auto fileNodes = _nodeVault.filterNodesByLabel(strId, (int) result.size());
     for (const auto &n: fileNodes) {
         VertexBody body = _propVault.getPropsFromId(n.firstPropId);
         result.emplace_back(n.firstPropId, n.nextEdgeId, n.labelId, body);
@@ -241,11 +261,19 @@ std::vector<Edge> Graph::getEdgesByLabel(const std::string &label) const {
                      return e.labelId == strId;
                  });
 
-    auto fileEdges = _nodeVault.filterEdgesByLabel(strId, (int)result.size());
+    auto fileEdges = _nodeVault.filterEdgesByLabel(strId, (int) result.size());
     std::copy(fileEdges.begin(), fileEdges.end(), std::back_inserter(result));
     return result;
 }
 
-std::vector<MemoryNode> Graph::getNodesContainsBody(VertexBody body) const {
-    return std::vector<MemoryNode>();
+std::vector<MemoryNode> Graph::getNodesContainsBody(const VertexBody &body) const {
+    std::vector<MemoryNode> result;
+    for (const auto &n: _localNodes) {
+        if (std::search(n.body.begin(), n.body.end(),
+                        body.begin(), body.end()) != n.body.end()) {
+            result.push_back(n);
+        }
+    }
+    return result;
 }
+

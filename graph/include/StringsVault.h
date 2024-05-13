@@ -5,8 +5,6 @@
 #include <map>
 
 
-// TODO: Сохранять строки с одинаковым содержимым как одно целое
-// Тогда при сохранении вернуть новый индекс (или уже имеющийся)
 class StringVault {
 public:
     explicit StringVault(const std::string& filename);

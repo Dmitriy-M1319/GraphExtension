@@ -52,9 +52,10 @@ void StringVault::setStr(unsigned int id, std::string&& value) {
 }
 
 void StringVault::append(const std::string& value) {
-    db_.at(curr_id) = value;
-    ++curr_id;
-
+    if(unsigned int idx = findStr(value) == 0) {
+        db_.at(curr_id) = value;
+        ++curr_id;
+    }
 }
 void StringVault::append(std::string&& value) {
     db_.at(curr_id) = std::move(value);

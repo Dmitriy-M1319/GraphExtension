@@ -24,6 +24,12 @@ public:
     Node(unsigned int firstPropId, unsigned int nextEdgeId,
          unsigned int labelId) : firstPropId(firstPropId), labelId(labelId),
                                  nextEdgeId(nextEdgeId) {}
+
+    bool operator==(const Node &n) const {
+        return (firstPropId == n.firstPropId) &&
+               (nextEdgeId == n.nextEdgeId) &&
+               (labelId == n.labelId);
+    }
 };
 
 struct Prop {
@@ -33,13 +39,40 @@ struct Prop {
 };
 
 struct Edge {
-    unsigned int labelId;
-    unsigned int firstNodeId;
-    unsigned int lastNodeId;
-    unsigned int firstPrevEdge;
-    unsigned int lastPrevEdge;
-    unsigned int firstNextEdge;
-    unsigned int lastNextEdge;
+public:
+    unsigned int labelId{};
+    unsigned int firstNodeId{};
+    unsigned int lastNodeId{};
+    unsigned int firstPrevEdge{};
+    unsigned int lastPrevEdge{};
+    unsigned int firstNextEdge{};
+    unsigned int lastNextEdge{};
+
+    Edge() = default;
+
+    Edge(unsigned int labelId,
+         unsigned int firstNodeId,
+         unsigned int lastNodeId,
+         unsigned int firstPrevEdge,
+         unsigned int lastPrevEdge,
+         unsigned int firstNextEdge,
+         unsigned int lastNextEdge) : labelId(labelId),
+                                      firstNodeId(firstNodeId),
+                                      lastNodeId(lastNodeId),
+                                      firstPrevEdge(firstPrevEdge),
+                                      lastPrevEdge(lastPrevEdge),
+                                      firstNextEdge(firstNextEdge),
+                                      lastNextEdge(lastNextEdge) {}
+
+    bool operator==(const Edge &e) const {
+        return (firstNodeId == e.firstNodeId) &&
+               (lastNodeId == e.lastNodeId) &&
+               (firstNextEdge == e.firstNextEdge) &&
+               (lastNextEdge == e.lastNextEdge) &&
+               (firstPrevEdge == e.firstPrevEdge) &&
+               (lastPrevEdge == e.lastPrevEdge) &&
+               (labelId == e.labelId);
+    }
 };
 
 struct MemoryNode : public Node {
