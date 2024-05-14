@@ -1,0 +1,9 @@
+CREATE EXTENSION graph_db;
+ОШИБКА:  расширение "graph_db" уже существует
+SELECT cypher('graph', 'test string');
+ИНФОРМАЦИЯ:  test string
+   cypher    
+-------------
+ test string
+(1 строка)
+

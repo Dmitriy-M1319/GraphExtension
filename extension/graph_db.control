@@ -1,0 +1,4 @@
+comment = 'Extension to graph-based database'
+default_version = '1.0'
+module_pathname = '$libdir/graph_db'
+relocatable = false
