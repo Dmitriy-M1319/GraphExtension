@@ -1,6 +1,5 @@
 #include "PropVault.h"
 #include <iostream>
-#include <vector>
 
 PropVault::PropVault(const std::string& propFilename,
           const std::string& strFilename): _vault(strFilename) {

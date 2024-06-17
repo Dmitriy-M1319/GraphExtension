@@ -3,3 +3,4 @@
 build/
 graph/build/
 cmake-build-debug
+graph/.cache/
